@@ -5,7 +5,7 @@ describe('App', () => {
   it('renders the Tailwind smoke-test heading', () => {
     render(<App />);
     expect(
-      screen.getByRole('heading', { name: /tailwind is alive/i })
-    ).toBeInTheDocument();
+    screen.getByRole('button', { name: /flowbite \+ i18n alive/i })
+)   .toBeInTheDocument();
   });
 });
