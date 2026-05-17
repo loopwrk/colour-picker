@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Alert, Button } from "flowbite-react";
 import { useTranslation } from "react-i18next";
-import { DonutSwatch } from "./components/DonutSwatch";
+import { LabelledDonut } from "./components/LabelledDonut";
 import { generatePalette, SPLIT_COMPLEMENTARY } from "./colour/harmony";
 import { usePaletteNames } from "./colour/usePaletteNames";
 import type { Colour } from "./colour/types";
@@ -27,7 +27,9 @@ function App() {
         )}
 
       <section className="mb-4">
-        <DonutSwatch palette={palette} />
+        <section className="mb-4 px-16 py-12">
+          <LabelledDonut palette={palette} names={namesQuery.data} />
+        </section>
       </section>
          
       <Button onClick={handleGenerate}>{t("app.generate")}</Button>

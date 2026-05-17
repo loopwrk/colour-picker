@@ -72,18 +72,16 @@ describe("App", () => {
   it("renders 5 swatches on initial load", () => {
     mockFetchEcho();
     const { container } = render(<App />, { wrapper: createWrapper() });
-    // Each swatch is a direct child <div> of the <section>. Querying by
-    // structure is brittle but acceptable for an early test — if you
-    // later refactor the swatches into a dedicated component, switch
-    // this to query by that component's role or test-id.
-    const swatches = container.querySelectorAll("section > svg > path");
+    const swatches = container.querySelectorAll("section svg > path");
     expect(swatches).toHaveLength(5);
   });
 
-  // Names aren't rendered anywhere on the page during sub-step 2.6 — the
-  // swatch list was replaced with the donut, and the radial labels that
-  // will show the names don't arrive until 2.7. Restore this test then.
-  it.todo("shows the colour names once labels are added in 2.7");
+  it("shows the colour names once the API resolves", async () => {
+    mockFetchEcho();
+    render(<App />, { wrapper: createWrapper() });
+    expect(await screen.findByText(/Mock Colour 1/)).toBeInTheDocument();
+    expect(screen.getByText(/Mock Colour 5/)).toBeInTheDocument();
+  });
 
   it("clicking Generate produces a different palette", async () => {
     mockFetchEcho();
@@ -96,9 +94,10 @@ describe("App", () => {
     const { container } = render(<App />, { wrapper: createWrapper() });
 
     // Each slice's colour lives in the path's `fill` attribute now —
-    // SVG <path> elements don't have text content to read.
+    // SVG <path> elements don't have text content to read. Descendant
+    // selector because the SVG is nested inside LabelledDonut's wrapper.
     const readFills = () =>
-      Array.from(container.querySelectorAll("section > svg > path")).map((el) =>
+      Array.from(container.querySelectorAll("section svg > path")).map((el) =>
         el.getAttribute("fill"),
       );
 

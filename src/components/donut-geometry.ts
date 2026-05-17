@@ -45,3 +45,25 @@ export function getSlicePath(
     "Z",
   ].join(" ");
 }
+
+/**
+ * Compute the position for a label outside a donut slice. Returns the
+ * label's centre as percentages of a square container — caller applies
+ * via inline style on `left`/`top`, plus a centring transform like
+ * `-translate-x-1/2 -translate-y-1/2`.
+ *
+ * `radiusPercent` controls how far outside the donut the label sits.
+ */
+export function getLabelPosition(
+  sliceIndex: number,
+  sliceCount: number,
+  radiusPercent: number,
+): { yPercentage: number; topPercent: number } {
+  const sliceAngle = 360 / sliceCount;
+  const centreAngleDeg = (sliceIndex + 0.5) * sliceAngle;
+  const angleRad = ((centreAngleDeg - 90) * Math.PI) / 180;
+  return {
+    yPercentage: 50 + radiusPercent * Math.cos(angleRad),
+    topPercent: 50 + radiusPercent * Math.sin(angleRad),
+  };
+}
