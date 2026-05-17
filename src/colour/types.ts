@@ -9,3 +9,9 @@ export interface Hsl {
   s: number;
   l: number;
 }
+
+export interface NamedColour {
+  hex: string; // canonical uppercase, no leading '#'
+  name: string; // from API, or the hex itself on failure
+  bestContrast: "white" | "black"; // safe default "black"
+}
