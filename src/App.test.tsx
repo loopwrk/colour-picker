@@ -76,18 +76,14 @@ describe("App", () => {
     // structure is brittle but acceptable for an early test — if you
     // later refactor the swatches into a dedicated component, switch
     // this to query by that component's role or test-id.
-    const swatches = container.querySelectorAll("section > div");
+    const swatches = container.querySelectorAll("section > svg > path");
     expect(swatches).toHaveLength(5);
   });
 
-  it("shows the colour names once the API resolves", async () => {
-    mockFetchEcho();
-    render(<App />, { wrapper: createWrapper() });
-    // findByText polls until the element appears or times out — perfect
-    // for "the thing will be here once the async query resolves".
-    expect(await screen.findByText(/Mock Colour 1/)).toBeInTheDocument();
-    expect(screen.getByText(/Mock Colour 5/)).toBeInTheDocument();
-  });
+  // Names aren't rendered anywhere on the page during sub-step 2.6 — the
+  // swatch list was replaced with the donut, and the radial labels that
+  // will show the names don't arrive until 2.7. Restore this test then.
+  it.todo("shows the colour names once labels are added in 2.7");
 
   it("clicking Generate produces a different palette", async () => {
     mockFetchEcho();
@@ -99,19 +95,21 @@ describe("App", () => {
     const user = userEvent.setup();
     const { container } = render(<App />, { wrapper: createWrapper() });
 
-    const readHexes = () =>
-      Array.from(container.querySelectorAll("section > div")).map((el) =>
-        el.textContent?.trim().slice(0, 6),
+    // Each slice's colour lives in the path's `fill` attribute now —
+    // SVG <path> elements don't have text content to read.
+    const readFills = () =>
+      Array.from(container.querySelectorAll("section > svg > path")).map((el) =>
+        el.getAttribute("fill"),
       );
 
-    const firstHexes = readHexes();
-    expect(firstHexes).toHaveLength(5);
+    const firstFills = readFills();
+    expect(firstFills).toHaveLength(5);
 
     randomSpy.mockReturnValue(0.5); // second palette → baseHue 180
     await user.click(screen.getByRole("button", { name: /generate/i }));
 
     await waitFor(() => {
-      expect(readHexes()).not.toEqual(firstHexes);
+      expect(readFills()).not.toEqual(firstFills);
     });
   });
 
