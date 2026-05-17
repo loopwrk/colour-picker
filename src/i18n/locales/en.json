@@ -1,5 +1,9 @@
 {
   "app": {
-    "smoke": "Flowbite + i18n alive"
+    "generate": "Generate",
+    "error": {
+      "namesFailed": "Couldn't load colour names",
+      "retry": "Retry"
+    }
   }
 }
