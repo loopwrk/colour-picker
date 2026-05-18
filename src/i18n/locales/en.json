@@ -1,5 +1,6 @@
 {
   "app": {
+    "title": "React Colour Picker",
     "generate": "Generate",
     "error": {
       "namesFailed": "Couldn't load colour names",

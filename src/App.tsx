@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Alert, Button } from "flowbite-react";
 import { useTranslation } from "react-i18next";
 import { LabelledDonut } from "./components/LabelledDonut";
+import { PaletteRows } from "./components/PaletteRows";
 import { generatePalette, SPLIT_COMPLEMENTARY } from "./colour/harmony";
 import { usePaletteNames } from "./colour/usePaletteNames";
 import type { Colour } from "./colour/types";
@@ -17,25 +18,43 @@ function App() {
   }
 
   return (
-    <div className='min-h-screen bg-slate-100 dark:bg-slate-900 p-8'>
-        {namesQuery.isError && (
-          <Alert color="failure" className="my-4">
-                <div className="flex items-center gap-3">
-            <span className="font-medium">{t("app.error.namesFailed")}</span><Button onClick={() => namesQuery.refetch()}>{t("app.error.retry")}</Button>
-               </div>
-          </Alert>
-        )}
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 p-4 md:p-8 flex flex-col gap-4">
+      <header>
+        <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+          {t("app.title")}
+        </h1>
+      </header>
 
-      <section className="mb-4">
-        <section className="mb-4 px-16 py-12">
-          <LabelledDonut palette={palette} names={namesQuery.data} />
-        </section>
+      {namesQuery.isError && (
+        <Alert color="failure">
+          <div className="flex items-center gap-3">
+            <span className="font-medium">{t("app.error.namesFailed")}</span>
+            <Button onClick={() => namesQuery.refetch()}>
+              {t("app.error.retry")}
+            </Button>
+          </div>
+        </Alert>
+      )}
+
+      <section className="mx-auto w-full max-w-70 md:max-w-175 md:px-16 md:py-12">
+        <LabelledDonut palette={palette} names={namesQuery.data} />
       </section>
-         
-      <Button onClick={handleGenerate}>{t("app.generate")}</Button>
-   
+
+      <PaletteRows
+        palette={palette}
+        names={namesQuery.data}
+        className="md:hidden"
+      />
+
+      <Button
+        onClick={handleGenerate}
+        className="w-full md:w-auto md:self-end"
+        pill
+      >
+        {t("app.generate")}
+      </Button>
     </div>
-  );
+);
 }
 
 export default App;

@@ -79,8 +79,10 @@ describe("App", () => {
   it("shows the colour names once the API resolves", async () => {
     mockFetchEcho();
     render(<App />, { wrapper: createWrapper() });
-    expect(await screen.findByText(/Mock Colour 1/)).toBeInTheDocument();
-    expect(screen.getByText(/Mock Colour 5/)).toBeInTheDocument();
+
+    const firstMatches = await screen.findAllByText(/Mock Colour 1/);
+    expect(firstMatches.length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Mock Colour 5/).length).toBeGreaterThan(0);
   });
 
   it("clicking Generate produces a different palette", async () => {

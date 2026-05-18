@@ -47,10 +47,10 @@ export function LabelledDonut({ palette, names }: LabelledDonutProps) {
   });
 
   return (
-    <div className="relative w-full aspect-square max-w-[500px] mx-auto">
-      <DonutSwatch palette={palette} />
-      {swatchLabels}
-    </div>
-  );
+  <div className="relative w-full aspect-square">
+    <DonutSwatch palette={palette} />
+    <div className="hidden md:block">{swatchLabels}</div>
+  </div>
+);
 }
 
