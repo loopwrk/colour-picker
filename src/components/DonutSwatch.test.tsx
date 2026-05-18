@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 import { DonutSwatch } from "./DonutSwatch";
 import type { Colour } from "../colour/types";
@@ -100,5 +101,39 @@ describe("DonutSwatch", () => {
     expect(
       screen.getByRole("img", { name: /colour palette/i }),
     ).toBeInTheDocument();
+  });
+
+  it("calls onSliceClick with the clicked slice's index", async () => {
+    const onSliceClick = vi.fn();
+    const user = userEvent.setup();
+    const { container } = render(
+      <DonutSwatch palette={FIVE_COLOURS} onSliceClick={onSliceClick} />,
+    );
+    const paths = container.querySelectorAll("path");
+    await user.click(paths[2]);
+    expect(onSliceClick).toHaveBeenCalledTimes(1);
+    expect(onSliceClick).toHaveBeenCalledWith(2);
+  });
+
+  it("renders no stroke on unlocked slices", () => {
+    const { container } = render(<DonutSwatch palette={FIVE_COLOURS} />);
+    container.querySelectorAll("path").forEach((path) => {
+      // strokeWidth attribute is "0" on unlocked slices (which is also
+      // CSS-equivalent to no stroke).
+      expect(path.getAttribute("stroke-width")).toBe("0");
+    });
+  });
+
+  it("renders a visible stroke on locked slices only", () => {
+    const mixed: Colour[] = [
+      { hex: "FF0000", name: "", locked: true },
+      { hex: "00FF00", name: "", locked: false },
+      { hex: "0000FF", name: "", locked: true },
+    ];
+    const { container } = render(<DonutSwatch palette={mixed} />);
+    const paths = Array.from(container.querySelectorAll("path"));
+    expect(paths[0].getAttribute("stroke-width")).toBe("1.5");
+    expect(paths[1].getAttribute("stroke-width")).toBe("0");
+    expect(paths[2].getAttribute("stroke-width")).toBe("1.5");
   });
 });

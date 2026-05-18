@@ -13,9 +13,21 @@ function App() {
     () => generatePalette(SPLIT_COMPLEMENTARY)
   );
   const namesQuery = usePaletteNames(palette.map((colour) => colour.hex));
-  const handleGenerate = () => { 
-    setPalette(generatePalette(SPLIT_COMPLEMENTARY));
-  }
+  const handleGenerate = () => {
+    setPalette((current) => {
+      const fresh = generatePalette(SPLIT_COMPLEMENTARY);
+      // Locked slots keep their existing entry; unlocked slots take the
+      // freshly-generated one.
+      return fresh.map((c, i) => (current[i].locked ? current[i] : c));
+    });
+  };
+  const handleLockToggle = (index: number) => {
+  setPalette((current) =>
+    current.map((c, i) =>
+      i === index ? { ...c, locked: !c.locked } : c,
+    ),
+  );
+};
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-900 p-4 md:p-8 flex flex-col gap-4">
@@ -37,13 +49,18 @@ function App() {
       )}
 
       <section className="mx-auto w-full max-w-70 md:max-w-175 md:px-16 md:py-12">
-        <LabelledDonut palette={palette} names={namesQuery.data} />
+        <LabelledDonut
+          palette={palette}
+          names={namesQuery.data}
+          onSliceClick={handleLockToggle}
+        />
       </section>
 
       <PaletteRows
         palette={palette}
         names={namesQuery.data}
         className="md:hidden"
+        onLockToggle={handleLockToggle}
       />
 
       <Button

@@ -1,15 +1,17 @@
 import type { Colour, NamedColour } from "../colour/types";
 import { DonutSwatch } from "./DonutSwatch";
 import { getLabelPosition } from "./donut-geometry";
+import { LockIcon } from "./icons";
 
 interface LabelledDonutProps {
   palette: Colour[];
   names?: NamedColour[];
+  onSliceClick?: (index: number) => void;
 }
 
 const radiusPercent = 65;
 
-export function LabelledDonut({ palette, names }: LabelledDonutProps) {
+export function LabelledDonut({ palette, names, onSliceClick }: LabelledDonutProps) {
   const swatchLabels = palette.map((colour, sliceIndex) => {
     const { yPercentage, topPercent } = getLabelPosition(
       sliceIndex,
@@ -31,6 +33,9 @@ export function LabelledDonut({ palette, names }: LabelledDonutProps) {
             className="inline-block w-2 h-2 rounded-full"
             style={{ backgroundColor: `#${colour.hex}` }}
           />
+          {colour.locked && (
+            <LockIcon className="w-3 h-3 text-slate-700 dark:text-slate-300" />
+          )}
         </div>
 
         {/* Line 2: hex */}
@@ -48,7 +53,7 @@ export function LabelledDonut({ palette, names }: LabelledDonutProps) {
 
   return (
   <div className="relative w-full aspect-square">
-    <DonutSwatch palette={palette} />
+    <DonutSwatch palette={palette} onSliceClick={onSliceClick} />
     <div className="hidden md:block">{swatchLabels}</div>
   </div>
 );

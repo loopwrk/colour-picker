@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 import { PaletteRows } from "./PaletteRows.tsx";
 import type { Colour, NamedColour } from "../colour/types";
@@ -88,5 +89,56 @@ describe("PaletteRows", () => {
       <PaletteRows palette={FIVE_COLOURS} className="md:hidden" />,
     );
     expect(container.querySelector("ul")?.className).toContain("md:hidden");
+  });
+
+  it("renders a lock button for each row with an action-describing aria-label", () => {
+    render(<PaletteRows palette={FIVE_COLOURS} />);
+    // All five rows start unlocked, so the action is "Lock colour HEX".
+    FIVE_COLOURS.forEach((colour) => {
+      expect(
+        screen.getByRole("button", {
+          name: new RegExp(`Lock colour ${colour.hex}`, "i"),
+        }),
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("calls onLockToggle with the row's index when the lock button is clicked", async () => {
+    const onLockToggle = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <PaletteRows palette={FIVE_COLOURS} onLockToggle={onLockToggle} />,
+    );
+    // Click the third row's lock button (index 2).
+    await user.click(
+      screen.getByRole("button", { name: /Lock colour 0000FF/i }),
+    );
+    expect(onLockToggle).toHaveBeenCalledTimes(1);
+    expect(onLockToggle).toHaveBeenCalledWith(2);
+  });
+
+  it("reflects locked state via aria-pressed and an inverted aria-label", () => {
+    const mixed: Colour[] = [
+      { hex: "FF0000", name: "", locked: true },
+      { hex: "00FF00", name: "", locked: false },
+    ];
+    render(<PaletteRows palette={mixed} />);
+    const locked = screen.getByRole("button", {
+      name: /Unlock colour FF0000/i,
+    });
+    const unlocked = screen.getByRole("button", {
+      name: /Lock colour 00FF00/i,
+    });
+    expect(locked.getAttribute("aria-pressed")).toBe("true");
+    expect(unlocked.getAttribute("aria-pressed")).toBe("false");
+  });
+
+  it("does not throw when the lock button is clicked without a handler", async () => {
+    const user = userEvent.setup();
+    render(<PaletteRows palette={FIVE_COLOURS} />);
+    // No onLockToggle prop — clicking should be a no-op, not a crash.
+    await expect(
+      user.click(screen.getByRole("button", { name: /Lock colour FF0000/i })),
+    ).resolves.not.toThrow();
   });
 });

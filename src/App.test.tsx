@@ -124,4 +124,41 @@ describe("App", () => {
       screen.getByRole("button", { name: /retry/i }),
     ).toBeInTheDocument();
   });
+
+  it("preserves a locked slot's hex across regeneration", async () => {
+    mockFetchEcho();
+    const randomSpy = vi.spyOn(Math, "random");
+    randomSpy.mockReturnValue(0); // initial palette → baseHue 0
+
+    const user = userEvent.setup();
+    const { container } = render(<App />, { wrapper: createWrapper() });
+
+    const readFills = () =>
+      Array.from(container.querySelectorAll("section svg > path")).map((el) =>
+        el.getAttribute("fill"),
+      );
+
+    const before = readFills();
+
+    // Lock the third slice by clicking its corresponding row's lock
+    // button. (The row buttons are scoped to PaletteRows, which renders
+    // for all viewport sizes in jsdom.) Targeting the row's button by
+    // its aria-label means we don't need to know the underlying hex.
+    const thirdHex = before[2]?.replace("#", "");
+    await user.click(
+      screen.getByRole("button", {
+        name: new RegExp(`Lock colour ${thirdHex}`, "i"),
+      }),
+    );
+
+    randomSpy.mockReturnValue(0.5); // next palette would use baseHue 180
+    await user.click(screen.getByRole("button", { name: /generate/i }));
+
+    await waitFor(() => {
+      const after = readFills();
+      // The locked slot stayed; at least one of the others changed.
+      expect(after[2]).toBe(before[2]);
+      expect(after).not.toEqual(before);
+    });
+  });
 });

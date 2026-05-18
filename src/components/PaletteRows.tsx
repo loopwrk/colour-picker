@@ -1,14 +1,18 @@
 import type { Colour, NamedColour } from "../colour/types";
 
+import { LockIcon, UnlockIcon } from "./icons";
+
 interface PaletteRowsProps {
   palette: Colour[];
   names?: NamedColour[];
+  onLockToggle?: (index: number) => void;
   className?: string;
 }
 
 export function PaletteRows({
   palette,
   names,
+  onLockToggle,
   className = "",
 }: PaletteRowsProps) {
   return (
@@ -30,31 +34,24 @@ export function PaletteRows({
                      <span className="text-sm text-slate-500 dark:text-slate-400 flex-1 truncate">
                         {names?.[index]?.name ?? ""}
                     </span>
-                    <UnlockedIcon className="text-slate-400 dark:text-slate-500 shrink-0" />
+                    <button
+                      type="button"
+                      onClick={() => onLockToggle?.(index)}
+                      aria-pressed={colour.locked}
+                      aria-label={
+                        colour.locked
+                          ? `Unlock colour ${colour.hex}`
+                          : `Lock colour ${colour.hex}`
+                      }
+                      className="text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 shrink-0 p-1 -m-1 rounded"
+                    >
+                      {colour.locked ? <LockIcon /> : <UnlockIcon />}
+                    </button>
+
                 </li>
             ))
         }
     </ul>
-  );
-}
-
-function UnlockedIcon({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-    >
-      <rect x="3" y="11" width="18" height="11" rx="2" />
-      <path d="M7 11V7a5 5 0 0 1 9.9-1" />
-    </svg>
   );
 }
 
