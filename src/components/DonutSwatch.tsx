@@ -48,6 +48,31 @@ export function DonutSwatch({
           stroke={slice.locked ? "white" : "none"}
           strokeWidth={slice.locked ? 1.5 : 0}
           onClick={isInteractive ? () => onSliceClick?.(index) : undefined}
+          onKeyDown={
+            isInteractive
+              ? (e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onSliceClick?.(index);
+                  }
+                }
+              : undefined
+          }
+          tabIndex={isInteractive ? 0 : undefined}
+          role={isInteractive ? "button" : undefined}
+          aria-pressed={isInteractive ? slice.locked : undefined}
+          aria-label={
+            isInteractive
+              ? slice.locked
+                ? `Unlock colour ${slice.hex}`
+                : `Lock colour ${slice.hex}`
+              : undefined
+          }
+          className={
+            isInteractive
+              ? "focus:outline-none focus-visible:stroke-blue-500 focus-visible:[stroke-width:2.5]"
+              : undefined
+          }
           style={{ cursor: isInteractive ? "pointer" : "default" }}
         />
       ))}

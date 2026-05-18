@@ -136,4 +136,97 @@ describe("DonutSwatch", () => {
     expect(paths[1].getAttribute("stroke-width")).toBe("0");
     expect(paths[2].getAttribute("stroke-width")).toBe("1.5");
   });
+
+  describe("when interactive (onSliceClick provided)", () => {
+    it("exposes each slice as a toggle button to assistive tech", () => {
+      const { container } = render(
+        <DonutSwatch palette={FIVE_COLOURS} onSliceClick={() => {}} />,
+      );
+      const paths = Array.from(container.querySelectorAll("path"));
+      paths.forEach((path, i) => {
+        expect(path.getAttribute("role")).toBe("button");
+        expect(path.getAttribute("tabindex")).toBe("0");
+        expect(path.getAttribute("aria-pressed")).toBe("false");
+        expect(path.getAttribute("aria-label")).toBe(
+          `Lock colour ${FIVE_COLOURS[i].hex}`,
+        );
+      });
+    });
+
+    it("inverts aria-pressed and aria-label on locked slices", () => {
+      const mixed: Colour[] = [
+        { hex: "FF0000", name: "", locked: true },
+        { hex: "00FF00", name: "", locked: false },
+      ];
+      const { container } = render(
+        <DonutSwatch palette={mixed} onSliceClick={() => {}} />,
+      );
+      const paths = Array.from(container.querySelectorAll("path"));
+      expect(paths[0].getAttribute("aria-pressed")).toBe("true");
+      expect(paths[0].getAttribute("aria-label")).toBe(
+        "Unlock colour FF0000",
+      );
+      expect(paths[1].getAttribute("aria-pressed")).toBe("false");
+      expect(paths[1].getAttribute("aria-label")).toBe(
+        "Lock colour 00FF00",
+      );
+    });
+
+    it("activates a focused slice on Enter", async () => {
+      const onSliceClick = vi.fn();
+      const user = userEvent.setup();
+      render(
+        <DonutSwatch palette={FIVE_COLOURS} onSliceClick={onSliceClick} />,
+      );
+      const slice = screen.getByRole("button", {
+        name: /Lock colour 0000FF/i,
+      });
+      slice.focus();
+      await user.keyboard("{Enter}");
+      expect(onSliceClick).toHaveBeenCalledTimes(1);
+      expect(onSliceClick).toHaveBeenCalledWith(2);
+    });
+
+    it("activates a focused slice on Space", async () => {
+      const onSliceClick = vi.fn();
+      const user = userEvent.setup();
+      render(
+        <DonutSwatch palette={FIVE_COLOURS} onSliceClick={onSliceClick} />,
+      );
+      const slice = screen.getByRole("button", {
+        name: /Lock colour FF0000/i,
+      });
+      slice.focus();
+      await user.keyboard(" ");
+      expect(onSliceClick).toHaveBeenCalledTimes(1);
+      expect(onSliceClick).toHaveBeenCalledWith(0);
+    });
+
+    it("ignores other keys on a focused slice", async () => {
+      const onSliceClick = vi.fn();
+      const user = userEvent.setup();
+      render(
+        <DonutSwatch palette={FIVE_COLOURS} onSliceClick={onSliceClick} />,
+      );
+      const slice = screen.getByRole("button", {
+        name: /Lock colour FF0000/i,
+      });
+      slice.focus();
+      await user.keyboard("a");
+      await user.keyboard("{ArrowRight}");
+      expect(onSliceClick).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("when non-interactive (no onSliceClick)", () => {
+    it("does not add button semantics to the slices", () => {
+      const { container } = render(<DonutSwatch palette={FIVE_COLOURS} />);
+      container.querySelectorAll("path").forEach((path) => {
+        expect(path.getAttribute("role")).toBeNull();
+        expect(path.getAttribute("tabindex")).toBeNull();
+        expect(path.getAttribute("aria-pressed")).toBeNull();
+        expect(path.getAttribute("aria-label")).toBeNull();
+      });
+    });
+  });
 });

@@ -40,9 +40,6 @@ npm run build      # production build
 
 ## Roadmap
 
-- [ ] Lockable slices (preserve a colour across regeneration)
-- [ ] Responsive mobile layout (stacked rows)
-- [ ] Dark / light mode toggle
 - [ ] Additional harmony modes: complementary, triad, square, monochromatic, shades
 - [ ] Colour-blindness simulation (deuteranopia, protanopia, tritanopia, monochromacy)
 - [ ] Auto-contrast shift toggle for accessibility
