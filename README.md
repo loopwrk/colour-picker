@@ -1,73 +1,48 @@
-# React + TypeScript + Vite
+# Colour Picker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A generative colour palette tool. Pick a harmony mode, click generate, get five
+colours arranged as a donut chart with human-readable names from
+[Color Pizza](https://api.color.pizza). Built as a personal project to get up to
+speed with React.
 
-Currently, two official plugins are available:
+> **Status: Work in progress.** Only the split-complementary harmony mode is
+> wired up so far, and several planned features (locking, mobile layout, dark
+> mode toggle, additional harmony modes, colour-blindness simulation, auto
+> accessibility contrast, mobile optimisation) aren't there yet.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## What's working
 
-## React Compiler
+- Split-complementary palette generation from a random base hue
+- Donut chart with five segments
+- Radial labels around the donut showing index, hex, and name
+- Names fetched from the Color Pizza API (batched, cached, with retry on failure)
+- A GENERATE button that produces a new palette
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech stack
 
-## Expanding the ESLint configuration
+- React 19 + TypeScript
+- Vite
+- Tailwind CSS v4
+- Flowbite React for UI primitives
+- TanStack Query for async state + caching
+- i18next for translatable strings
+- Vitest + React Testing Library
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Running locally
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```sh
+npm install
+npm run dev        # start the dev server
+npm run test       # run tests in watch mode
+npm run test:run   # run tests once
+npm run build      # production build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Roadmap
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- [ ] Lockable slices (preserve a colour across regeneration)
+- [ ] Responsive mobile layout (stacked rows)
+- [ ] Dark / light mode toggle
+- [ ] Additional harmony modes: complementary, triad, square, monochromatic, shades
+- [ ] Colour-blindness simulation (deuteranopia, protanopia, tritanopia, monochromacy)
+- [ ] Auto-contrast shift toggle for accessibility
