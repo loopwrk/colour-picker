@@ -20,7 +20,7 @@ export function DonutSwatch({
 }: DonutSwatchProps) {
   const cx = VIEWBOX_SIZE / 2;
   const cy = VIEWBOX_SIZE / 2;
-  const R = VIEWBOX_SIZE / 2;
+  const R = VIEWBOX_SIZE / 2.1;
   const r = R * holeRatio;
   const sliceAngle = palette.length === 0 ? 0 : 360 / palette.length;
 
@@ -45,7 +45,7 @@ export function DonutSwatch({
           key={index}
           d={slice.pathData}
           fill={`#${slice.hex}`}
-          stroke={slice.locked ? "white" : "none"}
+          stroke={slice.locked ? "#f1f5f9" : "none"}
           strokeWidth={slice.locked ? 1.5 : 0}
           onClick={isInteractive ? () => onSliceClick?.(index) : undefined}
           onKeyDown={
@@ -70,10 +70,12 @@ export function DonutSwatch({
           }
           className={
             isInteractive
-              ? "focus:outline-none focus-visible:stroke-blue-500 focus-visible:[stroke-width:2.5]"
+              ? "focus:outline-none hover:scale-[1.05] focus-visible:scale-[1.05] transition-transform origin-center"
               : undefined
           }
-          style={{ cursor: isInteractive ? "pointer" : "default" }}
+          style={{
+            cursor: isInteractive ? "pointer" : "default",
+          }}
         />
       ))}
     </svg>
