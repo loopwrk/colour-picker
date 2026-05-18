@@ -3,12 +3,15 @@ import { Alert, Button } from "flowbite-react";
 import { useTranslation } from "react-i18next";
 import { LabelledDonut } from "./components/LabelledDonut";
 import { PaletteRows } from "./components/PaletteRows";
+import { useTheme } from "./hooks/useTheme.ts";
+import { MoonIcon, SunIcon } from "./components/icons";
 import { generatePalette, SPLIT_COMPLEMENTARY } from "./colour/harmony";
 import { usePaletteNames } from "./colour/usePaletteNames";
 import type { Colour } from "./colour/types";
 
 function App() {
   const { t } = useTranslation();
+  const { theme, toggle: toggleTheme } = useTheme();
   const [palette, setPalette] = useState<Colour[]>(
     () => generatePalette(SPLIT_COMPLEMENTARY)
   );
@@ -35,6 +38,18 @@ function App() {
         <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100">
           {t("app.title")}
         </h1>
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={
+              theme === "dark"
+                ? t("app.theme.switchToLight")
+                : t("app.theme.switchToDark")
+            }
+            className="p-2 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800"
+          >
+            {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+          </button>
       </header>
 
       {namesQuery.isError && (

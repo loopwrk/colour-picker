@@ -2,6 +2,12 @@
   "app": {
     "title": "React Colour Picker",
     "generate": "Generate",
+    "theme": {
+      "lightMode": "Light mode",
+      "darkMode": "Dark mode",
+      "switchToDark": "Switch to dark mode",
+      "switchToLight": "Switch to light mode"
+    },
     "error": {
       "namesFailed": "Couldn't load colour names",
       "retry": "Retry"

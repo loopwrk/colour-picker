@@ -52,12 +52,39 @@ function mockFetchEcho() {
   });
 }
 
+/**
+ * jsdom doesn't implement matchMedia. The theme hook calls it on mount
+ * to detect OS preference, so every App test would crash without this
+ * shim. Light mode by default; tests that care can re-install with
+ * `installMatchMedia(true)`.
+ */
+function installMatchMedia(matches: boolean) {
+  Object.defineProperty(window, "matchMedia", {
+    writable: true,
+    configurable: true,
+    value: (query: string) => ({
+      matches,
+      media: query,
+      onchange: null,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+    }),
+  });
+}
+
 beforeEach(() => {
   _clearNameCache();
+  localStorage.clear();
+  document.documentElement.classList.remove("dark");
+  installMatchMedia(false);
 });
 
 afterEach(() => {
   vi.restoreAllMocks();
+  document.documentElement.classList.remove("dark");
 });
 
 describe("App", () => {
@@ -123,6 +150,26 @@ describe("App", () => {
     expect(
       screen.getByRole("button", { name: /retry/i }),
     ).toBeInTheDocument();
+  });
+
+  it("toggles the dark class on <html> when the theme button is clicked", async () => {
+    mockFetchEcho();
+    const user = userEvent.setup();
+    render(<App />, { wrapper: createWrapper() });
+
+    // Starts in light mode (matchMedia mock returns matches:false).
+    expect(document.documentElement.classList.contains("dark")).toBe(false);
+
+    await user.click(
+      screen.getByRole("button", { name: /switch to dark mode/i }),
+    );
+    expect(document.documentElement.classList.contains("dark")).toBe(true);
+
+    // The button's aria-label flips with the state.
+    await user.click(
+      screen.getByRole("button", { name: /switch to light mode/i }),
+    );
+    expect(document.documentElement.classList.contains("dark")).toBe(false);
   });
 
   it("preserves a locked slot's hex across regeneration", async () => {
