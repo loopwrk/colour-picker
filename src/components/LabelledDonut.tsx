@@ -31,7 +31,7 @@ export function LabelledDonut({
         className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center text-center select-none pointer-events-none"
       >
         {/* Line 1: index + dot */}
-        <div className="flex items-center gap-1.5 text-xs uppercase tracking-wider text-slate-500">
+        <div className="flex items-center gap-1.5 text-lg uppercase tracking-wider text-slate-500">
           <span>{indexStr}</span>
           <span
             className="inline-block w-2 h-2 rounded-full"

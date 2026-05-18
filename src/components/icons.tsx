@@ -1,26 +1,12 @@
-interface IconProps {
+import type { SVGProps } from "react";
+
+interface IconProps extends SVGProps<SVGSVGElement> {
   className?: string;
 }
 
-export function UnlockIcon({ className = "w-5 h-5" }: IconProps) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-    >
-      <rect x="3" y="11" width="18" height="11" rx="2" />
-      <path d="M7 11V7a5 5 0 0 1 9.9-1" />
-    </svg>
-  );
-}
+export function LockIcon({ className, width, height, ...props }: IconProps) {
+  const defaultClasses = width || height ? "" : "w-5 h-5";
 
-export function LockIcon({ className = "w-5 h-5" }: IconProps) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -29,8 +15,11 @@ export function LockIcon({ className = "w-5 h-5" }: IconProps) {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={className}
+      width={width}
+      height={height}
+      className={`${defaultClasses} ${className ?? ""}`.trim()}
       aria-hidden="true"
+      {...props}
     >
       <rect x="3" y="11" width="18" height="11" rx="2" />
       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
@@ -38,7 +27,8 @@ export function LockIcon({ className = "w-5 h-5" }: IconProps) {
   );
 }
 
-export function SunIcon({ className = "w-5 h-5" }: IconProps) {
+export function UnlockIcon({ className, width, height, ...props }: IconProps) {
+  const defaultClasses = width || height ? "" : "w-5 h-5";
   return (
     <svg
       viewBox="0 0 24 24"
@@ -47,8 +37,33 @@ export function SunIcon({ className = "w-5 h-5" }: IconProps) {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={className}
+      width={width}
+      height={height}
+      className={`${defaultClasses} ${className ?? ""}`.trim()}
       aria-hidden="true"
+      {...props}
+    >
+      <rect x="3" y="11" width="18" height="11" rx="2" />
+      <path d="M7 11V7a5 5 0 0 1 9.9-1" />
+    </svg>
+  );
+}
+
+export function SunIcon({ className, width, height, ...props }: IconProps) {
+  const defaultClasses = width || height ? "" : "w-5 h-5";
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      width={width}
+      height={height}
+      className={`${defaultClasses} ${className ?? ""}`.trim()}
+      aria-hidden="true"
+      {...props}
     >
       <circle cx="12" cy="12" r="4" />
       <path d="M12 2v2" />
@@ -63,7 +78,8 @@ export function SunIcon({ className = "w-5 h-5" }: IconProps) {
   );
 }
 
-export function MoonIcon({ className = "w-5 h-5" }: IconProps) {
+export function MoonIcon({ className, width, height, ...props }: IconProps) {
+  const defaultClasses = width || height ? "" : "w-5 h-5";
   return (
     <svg
       viewBox="0 0 24 24"
@@ -72,8 +88,11 @@ export function MoonIcon({ className = "w-5 h-5" }: IconProps) {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={className}
+      width={width}
+      height={height}
+      className={`${defaultClasses} ${className ?? ""}`.trim()}
       aria-hidden="true"
+      {...props}
     >
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
     </svg>

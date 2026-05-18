@@ -1,11 +1,8 @@
 import type { Colour } from "../colour/types";
 import { getSlicePath } from "./donut-geometry";
+import { LockIcon } from "./icons"; // Import your existing LockIcon
 
-/**
- * The SVG's internal coordinate space. Decoupled from rendered pixel size,
- * CSS controls how large the donut appears.
- */
-const VIEWBOX_SIZE = 100;
+const VIEWBOX_SIZE = 106; // Using the padded viewbox to prevent clipping
 
 interface DonutSwatchProps {
   palette: Colour[];
@@ -20,17 +17,36 @@ export function DonutSwatch({
 }: DonutSwatchProps) {
   const cx = VIEWBOX_SIZE / 2;
   const cy = VIEWBOX_SIZE / 2;
-  const R = VIEWBOX_SIZE / 2.1;
+  const R = 50;
   const r = R * holeRatio;
   const sliceAngle = palette.length === 0 ? 0 : 360 / palette.length;
 
-  const slices = palette.map((colour, i) => ({
-    hex: colour.hex,
-    pathData: getSlicePath(cx, cy, r, R, i * sliceAngle, (i + 1) * sliceAngle),
-    locked: colour.locked,
-  }));
-
   const isInteractive = Boolean(onSliceClick);
+
+  // Calculate the radius depth where the icon should sit (halfway between inner and outer edge)
+  const iconRadius = r + (R - r) / 2;
+
+  const slices = palette.map((colour, i) => {
+    const startAngle = i * sliceAngle;
+    const endAngle = (i + 1) * sliceAngle;
+
+    // Calculate the midpoint angle of the current slice (in radians)
+    const midAngleDegrees = startAngle + sliceAngle / 2;
+    // Subtract 90 degrees because SVG arc math traditionally starts from the top (12 o'clock)
+    const midAngleRadians = ((midAngleDegrees - 90) * Math.PI) / 180;
+
+    // Trigonometry to find the exact X and Y center of this specific slice
+    const iconX = cx + iconRadius * Math.cos(midAngleRadians);
+    const iconY = cy + iconRadius * Math.sin(midAngleRadians);
+
+    return {
+      hex: colour.hex,
+      pathData: getSlicePath(cx, cy, r, R, startAngle, endAngle),
+      locked: colour.locked,
+      iconX,
+      iconY,
+    };
+  });
 
   return (
     <svg
@@ -41,42 +57,54 @@ export function DonutSwatch({
       aria-label="Colour palette donut chart"
     >
       {slices.map((slice, index) => (
-        <path
+        <g
           key={index}
-          d={slice.pathData}
-          fill={`#${slice.hex}`}
-          stroke={slice.locked ? "#f1f5f9" : "none"}
-          strokeWidth={slice.locked ? 1.5 : 0}
+          className="group origin-center"
+          style={{ cursor: isInteractive ? "pointer" : "default" }}
           onClick={isInteractive ? () => onSliceClick?.(index) : undefined}
-          onKeyDown={
-            isInteractive
-              ? (e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    onSliceClick?.(index);
+        >
+          <path
+            d={slice.pathData}
+            fill={`#${slice.hex}`}
+            strokeWidth={0}
+            onKeyDown={
+              isInteractive
+                ? (e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onSliceClick?.(index);
+                    }
                   }
-                }
-              : undefined
-          }
-          tabIndex={isInteractive ? 0 : undefined}
-          role={isInteractive ? "button" : undefined}
-          aria-pressed={isInteractive ? slice.locked : undefined}
-          aria-label={
-            isInteractive
-              ? slice.locked
-                ? `Unlock colour ${slice.hex}`
-                : `Lock colour ${slice.hex}`
-              : undefined
-          }
-          className={
-            isInteractive
-              ? "focus:outline-none hover:scale-[1.05] focus-visible:scale-[1.05] transition-transform origin-center"
-              : undefined
-          }
-          style={{
-            cursor: isInteractive ? "pointer" : "default",
-          }}
-        />
+                : undefined
+            }
+            tabIndex={isInteractive ? 0 : undefined}
+            role={isInteractive ? "button" : undefined}
+            aria-pressed={isInteractive ? slice.locked : undefined}
+            aria-label={
+              isInteractive
+                ? `${slice.locked ? "Unlock" : "Lock"} colour ${slice.hex}`
+                : undefined
+            }
+            className={
+              isInteractive
+                ? "focus:outline-none group-hover:scale-[1.05] focus-visible:scale-[1.05] transition-transform duration-150 origin-center z-40"
+                : undefined
+            }
+          />
+
+          {slice.locked && (
+            <g
+              transform={`translate(${slice.iconX}, ${slice.iconY})`}
+              className="pointer-events-none"
+            >
+              <circle r="4" fill="white" className="opacity-40 shadow-sm" />
+
+              <g transform="translate(-2, -2)">
+                <LockIcon width="4" height="4" className="text-slate-800" />
+              </g>
+            </g>
+          )}
+        </g>
       ))}
     </svg>
   );

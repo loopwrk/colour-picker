@@ -170,6 +170,33 @@ describe("App", () => {
     expect(document.documentElement.classList.contains("dark")).toBe(false);
   });
 
+  it("regenerates the palette when the harmony mode changes", async () => {
+    mockFetchEcho();
+    const randomSpy = vi.spyOn(Math, "random");
+    randomSpy.mockReturnValue(0); // deterministic seed throughout
+
+    const user = userEvent.setup();
+    const { container } = render(<App />, { wrapper: createWrapper() });
+
+    const readFills = () =>
+      Array.from(container.querySelectorAll("section svg > path")).map((el) =>
+        el.getAttribute("fill"),
+      );
+
+    const splitFills = readFills();
+    expect(splitFills).toHaveLength(5);
+
+    // Pick the mode selector by its visually-hidden label, then switch it.
+    const selector = screen.getByLabelText(/harmony/i);
+    await user.selectOptions(selector, "shades");
+
+    await waitFor(() => {
+      // Same base hue (Math.random pinned to 0) but a different recipe,
+      // so the rendered fills must change.
+      expect(readFills()).not.toEqual(splitFills);
+    });
+  });
+
   it("preserves a locked slot's hex across regeneration", async () => {
     mockFetchEcho();
     const randomSpy = vi.spyOn(Math, "random");
