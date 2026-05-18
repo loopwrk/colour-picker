@@ -44,7 +44,7 @@ export function PaletteRows({
             }
             className="text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 shrink-0 p-1 -m-1 rounded"
           >
-            {colour.locked ? <LockIcon /> : <UnlockIcon />}
+            {colour.locked ? <LockIcon /> : null}
           </button>
         </li>
       ))}
