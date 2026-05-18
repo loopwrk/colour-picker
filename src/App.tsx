@@ -80,7 +80,7 @@ function App() {
 
       <Button
         onClick={handleGenerate}
-        className="w-full md:w-auto md:self-end"
+        className="md:fixed md:bottom-6 md:right-6 md:z-50 w-full md:w-auto md:self-end"
         pill
       >
         {t("app.generate")}
