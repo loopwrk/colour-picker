@@ -38,11 +38,11 @@ describe("generatePalette", () => {
     const palette = generatePalette(SPLIT_COMPLEMENTARY, 151);
 
     it.each<[number, number]>([
-      [0, 151],         // base
-      [1, 151 + 150],   // split-comp 1
-      [2, 151 + 210],   // split-comp 2 (wraps to 1°)
-      [3, 151],         // muted base
-      [4, 151 + 150],   // muted split-comp 1
+      [0, 151], // base
+      [1, 151 + 150], // split-comp 1
+      [2, 151 + 210], // split-comp 2 (wraps to 1°)
+      [3, 151], // muted base
+      [4, 151 + 150], // muted split-comp 1
     ])("slot %d has hue ≈ %d°", (idx, expectedHue) => {
       expectHueCloseTo(hexToHsl(palette[idx].hex).h, expectedHue);
     });
@@ -110,7 +110,7 @@ function expectHueCloseTo(
   expected: number,
   tolerance = 2,
 ): void {
-  const normalised = (((expected % 360) + 360) % 360);
+  const normalised = ((expected % 360) + 360) % 360;
   const rawDiff = Math.abs(actual - normalised);
   const diff = Math.min(rawDiff, 360 - rawDiff);
   expect(diff).toBeLessThanOrEqual(tolerance);

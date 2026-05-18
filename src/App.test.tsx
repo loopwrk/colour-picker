@@ -147,9 +147,7 @@ describe("App", () => {
     expect(
       await screen.findByText(/Couldn't load colour names/i),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /retry/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /retry/i })).toBeInTheDocument();
   });
 
   it("toggles the dark class on <html> when the theme button is clicked", async () => {

@@ -22,7 +22,7 @@ export function useTheme(): {
 
   return {
     theme,
-    toggle: () => setTheme((theme) => (theme === "dark" ? "light" : "dark")),
+    toggle: () => setTheme((prev) => (prev === "dark" ? "light" : "dark")),
   };
 }
 

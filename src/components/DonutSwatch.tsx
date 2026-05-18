@@ -13,7 +13,11 @@ interface DonutSwatchProps {
   onSliceClick?: (index: number) => void;
 }
 
-export function DonutSwatch({ palette, holeRatio = 0.42, onSliceClick, }: DonutSwatchProps) {
+export function DonutSwatch({
+  palette,
+  holeRatio = 0.42,
+  onSliceClick,
+}: DonutSwatchProps) {
   const cx = VIEWBOX_SIZE / 2;
   const cy = VIEWBOX_SIZE / 2;
   const R = VIEWBOX_SIZE / 2;

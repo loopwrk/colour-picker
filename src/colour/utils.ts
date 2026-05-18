@@ -92,8 +92,7 @@ export function hslToHex({ h, s, l }: Hsl): string {
   if (sNorm === 0) {
     r = g = b = lNorm;
   } else {
-    const q =
-      lNorm < 0.5 ? lNorm * (1 + sNorm) : lNorm + sNorm - lNorm * sNorm;
+    const q = lNorm < 0.5 ? lNorm * (1 + sNorm) : lNorm + sNorm - lNorm * sNorm;
     const p = 2 * lNorm - q;
     r = hueToRgb(p, q, hNorm + 1 / 3);
     g = hueToRgb(p, q, hNorm);

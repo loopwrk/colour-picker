@@ -121,9 +121,7 @@ describe("fetchPaletteNames", () => {
 
   it("rejects when the network fails", async () => {
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("network"));
-    await expect(
-      fetchPaletteNames(["1E5F93", "E44C19"]),
-    ).rejects.toThrow();
+    await expect(fetchPaletteNames(["1E5F93", "E44C19"])).rejects.toThrow();
   });
 
   it("rejects on a non-200 response", async () => {
@@ -148,9 +146,9 @@ describe("fetchPaletteNames", () => {
         ],
       }),
     );
-    await expect(
-      fetchPaletteNames(["1E5F93", "E44C19"]),
-    ).rejects.toThrow(/did not return a name for E44C19/);
+    await expect(fetchPaletteNames(["1E5F93", "E44C19"])).rejects.toThrow(
+      /did not return a name for E44C19/,
+    );
   });
 
   it("does not cache failed lookups (the next call can succeed)", async () => {

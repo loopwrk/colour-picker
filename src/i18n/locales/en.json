@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "React Colour Picker",
-    "generate": "Generate ⎵",
+    "generate": "Generate",
     "theme": {
       "lightMode": "Light mode",
       "darkMode": "Dark mode",

@@ -58,10 +58,9 @@ describe("usePaletteNames", () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
       jsonResponse(TWO_COLOUR_RESPONSE),
     );
-    const { result } = renderHook(
-      () => usePaletteNames(["1E5F93", "E44C19"]),
-      { wrapper: createWrapper() },
-    );
+    const { result } = renderHook(() => usePaletteNames(["1E5F93", "E44C19"]), {
+      wrapper: createWrapper(),
+    });
     expect(result.current.isLoading).toBe(true);
     expect(result.current.data).toBeUndefined();
   });
@@ -70,10 +69,9 @@ describe("usePaletteNames", () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
       jsonResponse(TWO_COLOUR_RESPONSE),
     );
-    const { result } = renderHook(
-      () => usePaletteNames(["1E5F93", "E44C19"]),
-      { wrapper: createWrapper() },
-    );
+    const { result } = renderHook(() => usePaletteNames(["1E5F93", "E44C19"]), {
+      wrapper: createWrapper(),
+    });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual<NamedColour[]>([
       { hex: "1E5F93", name: "Hyper Blue", bestContrast: "white" },

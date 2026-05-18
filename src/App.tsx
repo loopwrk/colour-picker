@@ -3,7 +3,7 @@ import { Alert, Button } from "flowbite-react";
 import { useTranslation } from "react-i18next";
 import { LabelledDonut } from "./components/LabelledDonut";
 import { PaletteRows } from "./components/PaletteRows";
-import { useTheme } from "./hooks/useTheme.ts";
+import { useTheme } from "./hooks/useTheme";
 import { MoonIcon, SunIcon } from "./components/icons";
 import { generatePalette, SPLIT_COMPLEMENTARY } from "./colour/harmony";
 import { usePaletteNames } from "./colour/usePaletteNames";
@@ -12,8 +12,8 @@ import type { Colour } from "./colour/types";
 function App() {
   const { t } = useTranslation();
   const { theme, toggle: toggleTheme } = useTheme();
-  const [palette, setPalette] = useState<Colour[]>(
-    () => generatePalette(SPLIT_COMPLEMENTARY)
+  const [palette, setPalette] = useState<Colour[]>(() =>
+    generatePalette(SPLIT_COMPLEMENTARY),
   );
   const namesQuery = usePaletteNames(palette.map((colour) => colour.hex));
   const handleGenerate = () => {
@@ -25,12 +25,10 @@ function App() {
     });
   };
   const handleLockToggle = (index: number) => {
-  setPalette((current) =>
-    current.map((c, i) =>
-      i === index ? { ...c, locked: !c.locked } : c,
-    ),
-  );
-};
+    setPalette((current) =>
+      current.map((c, i) => (i === index ? { ...c, locked: !c.locked } : c)),
+    );
+  };
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-900 p-4 md:p-8 flex flex-col gap-4">
@@ -38,18 +36,18 @@ function App() {
         <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100">
           {t("app.title")}
         </h1>
-          <button
-            type="button"
-            onClick={toggleTheme}
-            aria-label={
-              theme === "dark"
-                ? t("app.theme.switchToLight")
-                : t("app.theme.switchToDark")
-            }
-            className="p-2 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800"
-          >
-            {theme === "dark" ? <SunIcon /> : <MoonIcon />}
-          </button>
+        <button
+          type="button"
+          onClick={toggleTheme}
+          aria-label={
+            theme === "dark"
+              ? t("app.theme.switchToLight")
+              : t("app.theme.switchToDark")
+          }
+          className="p-2 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800"
+        >
+          {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+        </button>
       </header>
 
       {namesQuery.isError && (
@@ -80,13 +78,16 @@ function App() {
 
       <Button
         onClick={handleGenerate}
-        className="md:fixed md:bottom-6 md:right-6 md:z-50 w-full md:w-auto md:self-end"
+        className="md:fixed md:bottom-6 md:right-6 md:z-50 w-full md:w-auto"
         pill
       >
         {t("app.generate")}
+        <span aria-hidden="true" className="ml-2 font-mono text-base">
+          ⎵
+        </span>
       </Button>
     </div>
-);
+  );
 }
 
 export default App;

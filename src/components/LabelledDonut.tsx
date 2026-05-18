@@ -11,9 +11,13 @@ interface LabelledDonutProps {
 
 const radiusPercent = 65;
 
-export function LabelledDonut({ palette, names, onSliceClick }: LabelledDonutProps) {
+export function LabelledDonut({
+  palette,
+  names,
+  onSliceClick,
+}: LabelledDonutProps) {
   const swatchLabels = palette.map((colour, sliceIndex) => {
-    const { yPercentage, topPercent } = getLabelPosition(
+    const { xPercent, yPercent } = getLabelPosition(
       sliceIndex,
       palette.length,
       radiusPercent,
@@ -23,7 +27,7 @@ export function LabelledDonut({ palette, names, onSliceClick }: LabelledDonutPro
     return (
       <div
         key={sliceIndex}
-        style={{ left: `${yPercentage}%`, top: `${topPercent}%` }}
+        style={{ left: `${xPercent}%`, top: `${yPercent}%` }}
         className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center text-center select-none pointer-events-none"
       >
         {/* Line 1: index + dot */}
@@ -52,10 +56,9 @@ export function LabelledDonut({ palette, names, onSliceClick }: LabelledDonutPro
   });
 
   return (
-  <div className="relative w-full aspect-square">
-    <DonutSwatch palette={palette} onSliceClick={onSliceClick} />
-    <div className="hidden md:block">{swatchLabels}</div>
-  </div>
-);
+    <div className="relative w-full aspect-square">
+      <DonutSwatch palette={palette} onSliceClick={onSliceClick} />
+      <div className="hidden md:block">{swatchLabels}</div>
+    </div>
+  );
 }
-

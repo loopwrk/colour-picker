@@ -106,9 +106,7 @@ describe("PaletteRows", () => {
   it("calls onLockToggle with the row's index when the lock button is clicked", async () => {
     const onLockToggle = vi.fn();
     const user = userEvent.setup();
-    render(
-      <PaletteRows palette={FIVE_COLOURS} onLockToggle={onLockToggle} />,
-    );
+    render(<PaletteRows palette={FIVE_COLOURS} onLockToggle={onLockToggle} />);
     // Click the third row's lock button (index 2).
     await user.click(
       screen.getByRole("button", { name: /Lock colour 0000FF/i }),
