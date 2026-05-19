@@ -1,14 +1,14 @@
 import {
-  // COMPLEMENTARY,
-  // HARMONY_MODES,
-  // MONOCHROMATIC,
-  // RECIPES,
-  // SHADES,
+  COMPLEMENTARY,
+  HARMONY_MODES,
+  MONOCHROMATIC,
+  RECIPES,
+  SHADES,
   SPLIT_COMPLEMENTARY,
-  // SQUARE,
-  // TRIAD,
+  SQUARE,
+  TRIAD,
   generatePalette,
-  // type HarmonyMode,
+  type HarmonyMode,
 } from "./harmony";
 import { hexToHsl, isValidHex } from "./utils";
 
@@ -113,98 +113,98 @@ describe("generatePalette", () => {
 });
 
 describe("additional harmony recipes", () => {
-  // it.each<[string, typeof SPLIT_COMPLEMENTARY]>([
-  //   ["COMPLEMENTARY", COMPLEMENTARY],
-  //   ["TRIAD", TRIAD],
-  //   ["SQUARE", SQUARE],
-  //   ["MONOCHROMATIC", MONOCHROMATIC],
-  //   ["SHADES", SHADES],
-  // ])("%s has 5 slots", (_, recipe) => {
-  //   expect(recipe).toHaveLength(5);
-  // });
-  // it.each<[string, typeof SPLIT_COMPLEMENTARY]>([
-  //   ["COMPLEMENTARY", COMPLEMENTARY],
-  //   ["TRIAD", TRIAD],
-  //   ["SQUARE", SQUARE],
-  //   ["MONOCHROMATIC", MONOCHROMATIC],
-  //   ["SHADES", SHADES],
-  // ])("%s generates 5 valid hex colours", (_, recipe) => {
-  //   const palette = generatePalette(recipe, 200);
-  //   expect(palette).toHaveLength(5);
-  //   for (const c of palette) {
-  //     expect(isValidHex(c.hex)).toBe(true);
-  //   }
-  // });
-  // it("COMPLEMENTARY places slots 0 and 1 at base and base + 180°", () => {
-  //   const palette = generatePalette(COMPLEMENTARY, 50);
-  //   expectHueCloseTo(hexToHsl(palette[0].hex).h, 50);
-  //   expectHueCloseTo(hexToHsl(palette[1].hex).h, 50 + 180);
-  // });
-  // it("TRIAD places slots 0/1/2 at base, +120°, +240°", () => {
-  //   const palette = generatePalette(TRIAD, 30);
-  //   expectHueCloseTo(hexToHsl(palette[0].hex).h, 30);
-  //   expectHueCloseTo(hexToHsl(palette[1].hex).h, 30 + 120);
-  //   expectHueCloseTo(hexToHsl(palette[2].hex).h, 30 + 240);
-  // });
-  // it("SQUARE places slots 0–3 at base, +90°, +180°, +270°", () => {
-  //   const palette = generatePalette(SQUARE, 100);
-  //   expectHueCloseTo(hexToHsl(palette[0].hex).h, 100);
-  //   expectHueCloseTo(hexToHsl(palette[1].hex).h, 100 + 90);
-  //   expectHueCloseTo(hexToHsl(palette[2].hex).h, 100 + 180);
-  //   expectHueCloseTo(hexToHsl(palette[3].hex).h, 100 + 270);
-  // });
-  // it("MONOCHROMATIC keeps every slot at the base hue", () => {
-  //   const palette = generatePalette(MONOCHROMATIC, 200);
-  //   for (const c of palette) {
-  //     // Achromatic-near-edges may report h=0 from greyscale; tolerance high.
-  //     const h = hexToHsl(c.hex).h;
-  //     expectHueCloseTo(h, 200, 5);
-  //   }
-  // });
-  // it("SHADES keeps every slot at the base hue and constant saturation", () => {
-  //   const palette = generatePalette(SHADES, 200);
-  //   for (const c of palette) {
-  //     const { h, s } = hexToHsl(c.hex);
-  //     expectHueCloseTo(h, 200, 5);
-  //     expect(Math.abs(s - 80)).toBeLessThanOrEqual(2);
-  //   }
-  // });
-  // it("SHADES has monotonically decreasing lightness across the 5 slots", () => {
-  //   const palette = generatePalette(SHADES, 200);
-  //   const lightnesses = palette.map((c) => hexToHsl(c.hex).l);
-  //   for (let i = 1; i < lightnesses.length; i++) {
-  //     expect(lightnesses[i]).toBeLessThan(lightnesses[i - 1]);
-  //   }
-  // });
+  it.each<[string, typeof SPLIT_COMPLEMENTARY]>([
+    ["COMPLEMENTARY", COMPLEMENTARY],
+    ["TRIAD", TRIAD],
+    ["SQUARE", SQUARE],
+    ["MONOCHROMATIC", MONOCHROMATIC],
+    ["SHADES", SHADES],
+  ])("%s has 5 slots", (_, recipe) => {
+    expect(recipe).toHaveLength(5);
+  });
+  it.each<[string, typeof SPLIT_COMPLEMENTARY]>([
+    ["COMPLEMENTARY", COMPLEMENTARY],
+    ["TRIAD", TRIAD],
+    ["SQUARE", SQUARE],
+    ["MONOCHROMATIC", MONOCHROMATIC],
+    ["SHADES", SHADES],
+  ])("%s generates 5 valid hex colours", (_, recipe) => {
+    const palette = generatePalette(recipe, 200);
+    expect(palette).toHaveLength(5);
+    for (const c of palette) {
+      expect(isValidHex(c.hex)).toBe(true);
+    }
+  });
+  it("COMPLEMENTARY places slots 0 and 1 at base and base + 180°", () => {
+    const palette = generatePalette(COMPLEMENTARY, 50);
+    expectHueCloseTo(hexToHsl(palette[0].hex).h, 50);
+    expectHueCloseTo(hexToHsl(palette[1].hex).h, 50 + 180);
+  });
+  it("TRIAD places slots 0/1/2 at base, +120°, +240°", () => {
+    const palette = generatePalette(TRIAD, 30);
+    expectHueCloseTo(hexToHsl(palette[0].hex).h, 30);
+    expectHueCloseTo(hexToHsl(palette[1].hex).h, 30 + 120);
+    expectHueCloseTo(hexToHsl(palette[2].hex).h, 30 + 240);
+  });
+  it("SQUARE places slots 0–3 at base, +90°, +180°, +270°", () => {
+    const palette = generatePalette(SQUARE, 100);
+    expectHueCloseTo(hexToHsl(palette[0].hex).h, 100);
+    expectHueCloseTo(hexToHsl(palette[1].hex).h, 100 + 90);
+    expectHueCloseTo(hexToHsl(palette[2].hex).h, 100 + 180);
+    expectHueCloseTo(hexToHsl(palette[3].hex).h, 100 + 270);
+  });
+  it("MONOCHROMATIC keeps every slot at the base hue", () => {
+    const palette = generatePalette(MONOCHROMATIC, 200);
+    for (const c of palette) {
+      // Achromatic-near-edges may report h=0 from greyscale; tolerance high.
+      const h = hexToHsl(c.hex).h;
+      expectHueCloseTo(h, 200, 5);
+    }
+  });
+  it("SHADES keeps every slot at the base hue and constant saturation", () => {
+    const palette = generatePalette(SHADES, 200);
+    for (const c of palette) {
+      const { h, s } = hexToHsl(c.hex);
+      expectHueCloseTo(h, 200, 5);
+      expect(Math.abs(s - 80)).toBeLessThanOrEqual(2);
+    }
+  });
+  it("SHADES has monotonically decreasing lightness across the 5 slots", () => {
+    const palette = generatePalette(SHADES, 200);
+    const lightnesses = palette.map((c) => hexToHsl(c.hex).l);
+    for (let i = 1; i < lightnesses.length; i++) {
+      expect(lightnesses[i]).toBeLessThan(lightnesses[i - 1]);
+    }
+  });
 });
 
-// describe("RECIPES map and HARMONY_MODES list", () => {
-//   const expectedModes: HarmonyMode[] = [
-//     "split-complementary",
-//     "complementary",
-//     "triad",
-//     "square",
-//     "monochromatic",
-//     "shades",
-//   ];
+describe("RECIPES map and HARMONY_MODES list", () => {
+  const expectedModes: HarmonyMode[] = [
+    "split-complementary",
+    "complementary",
+    "triad",
+    "square",
+    "monochromatic",
+    "shades",
+  ];
 
-//   it("RECIPES has an entry for every HarmonyMode", () => {
-//     for (const mode of expectedModes) {
-//       expect(RECIPES[mode]).toBeDefined();
-//       expect(RECIPES[mode]).toHaveLength(5);
-//     }
-//   });
+  it("RECIPES has an entry for every HarmonyMode", () => {
+    for (const mode of expectedModes) {
+      expect(RECIPES[mode]).toBeDefined();
+      expect(RECIPES[mode]).toHaveLength(5);
+    }
+  });
 
-//   it("HARMONY_MODES lists every mode exactly once", () => {
-//     expect([...HARMONY_MODES].sort()).toEqual([...expectedModes].sort());
-//     expect(HARMONY_MODES.length).toBe(new Set(HARMONY_MODES).size);
-//   });
+  it("HARMONY_MODES lists every mode exactly once", () => {
+    expect([...HARMONY_MODES].sort()).toEqual([...expectedModes].sort());
+    expect(HARMONY_MODES.length).toBe(new Set(HARMONY_MODES).size);
+  });
 
-//   it("RECIPES['split-complementary'] is the SPLIT_COMPLEMENTARY constant", () => {
-//     // Same reference — the lookup is just a re-export, no copy.
-//     expect(RECIPES["split-complementary"]).toBe(SPLIT_COMPLEMENTARY);
-//   });
-// });
+  it("RECIPES['split-complementary'] is the SPLIT_COMPLEMENTARY constant", () => {
+    // Same reference — the lookup is just a re-export, no copy.
+    expect(RECIPES["split-complementary"]).toBe(SPLIT_COMPLEMENTARY);
+  });
+});
 
 /**
  * Assert two hue values are within `tolerance` degrees of each other,

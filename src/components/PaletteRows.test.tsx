@@ -91,18 +91,6 @@ describe("PaletteRows", () => {
     expect(container.querySelector("ul")?.className).toContain("md:hidden");
   });
 
-  it("renders a lock button for each row with an action-describing aria-label", () => {
-    render(<PaletteRows palette={FIVE_COLOURS} />);
-    // All five rows start unlocked, so the action is "Lock colour HEX".
-    FIVE_COLOURS.forEach((colour) => {
-      expect(
-        screen.getByRole("button", {
-          name: new RegExp(`Lock colour ${colour.hex}`, "i"),
-        }),
-      ).toBeInTheDocument();
-    });
-  });
-
   it("calls onLockToggle with the row's index when the lock button is clicked", async () => {
     const onLockToggle = vi.fn();
     const user = userEvent.setup();

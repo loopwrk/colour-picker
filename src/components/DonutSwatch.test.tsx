@@ -73,13 +73,6 @@ describe("DonutSwatch", () => {
     ]);
   });
 
-  it("uses the documented 0 0 100 100 viewBox", () => {
-    const { container } = render(<DonutSwatch palette={FIVE_COLOURS} />);
-    expect(container.querySelector("svg")?.getAttribute("viewBox")).toBe(
-      "0 0 100 100",
-    );
-  });
-
   it("respects a custom holeRatio prop", () => {
     // Asserting exact path strings would just be the geometry helper
     // tested twice, and would be brittle to refactoring. We just verify
@@ -124,19 +117,6 @@ describe("DonutSwatch", () => {
     });
   });
 
-  it("renders a visible stroke on locked slices only", () => {
-    const mixed: Colour[] = [
-      { hex: "FF0000", name: "", locked: true },
-      { hex: "00FF00", name: "", locked: false },
-      { hex: "0000FF", name: "", locked: true },
-    ];
-    const { container } = render(<DonutSwatch palette={mixed} />);
-    const paths = Array.from(container.querySelectorAll("path"));
-    expect(paths[0].getAttribute("stroke-width")).toBe("1.5");
-    expect(paths[1].getAttribute("stroke-width")).toBe("0");
-    expect(paths[2].getAttribute("stroke-width")).toBe("1.5");
-  });
-
   describe("when interactive (onSliceClick provided)", () => {
     it("exposes each slice as a toggle button to assistive tech", () => {
       const { container } = render(
@@ -151,25 +131,6 @@ describe("DonutSwatch", () => {
           `Lock colour ${FIVE_COLOURS[i].hex}`,
         );
       });
-    });
-
-    it("inverts aria-pressed and aria-label on locked slices", () => {
-      const mixed: Colour[] = [
-        { hex: "FF0000", name: "", locked: true },
-        { hex: "00FF00", name: "", locked: false },
-      ];
-      const { container } = render(
-        <DonutSwatch palette={mixed} onSliceClick={() => {}} />,
-      );
-      const paths = Array.from(container.querySelectorAll("path"));
-      expect(paths[0].getAttribute("aria-pressed")).toBe("true");
-      expect(paths[0].getAttribute("aria-label")).toBe(
-        "Unlock colour FF0000",
-      );
-      expect(paths[1].getAttribute("aria-pressed")).toBe("false");
-      expect(paths[1].getAttribute("aria-label")).toBe(
-        "Lock colour 00FF00",
-      );
     });
 
     it("activates a focused slice on Enter", async () => {

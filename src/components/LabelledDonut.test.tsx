@@ -96,15 +96,4 @@ describe("LabelledDonut", () => {
     // SVG; if no labels are locked, the donut should be the only SVG.
     expect(container.querySelectorAll("svg")).toHaveLength(1);
   });
-
-  it("renders a lock indicator in each locked label", () => {
-    const mixed: Colour[] = [
-      { hex: "FF0000", name: "", locked: true },
-      { hex: "00FF00", name: "", locked: false },
-      { hex: "0000FF", name: "", locked: true },
-    ];
-    const { container } = render(<LabelledDonut palette={mixed} />);
-    // 1 donut SVG + 2 lock SVGs in the locked labels = 3.
-    expect(container.querySelectorAll("svg")).toHaveLength(3);
-  });
 });

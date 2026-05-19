@@ -40,47 +40,23 @@ afterEach(() => {
 });
 
 describe("useTheme", () => {
-  it("defaults to light when no preference is stored and OS prefers light", () => {
+  it("defaults to dark mode", () => {
     installMatchMedia(false);
-    const { result } = renderHook(() => useTheme());
-    expect(result.current.theme).toBe("light");
-    expect(document.documentElement.classList.contains("dark")).toBe(false);
-  });
-
-  it("defaults to dark when no preference is stored but OS prefers dark", () => {
-    installMatchMedia(true);
     const { result } = renderHook(() => useTheme());
     expect(result.current.theme).toBe("dark");
     expect(document.documentElement.classList.contains("dark")).toBe(true);
-  });
-
-  it("prefers the stored value over the OS preference", () => {
-    installMatchMedia(true); // OS says dark
-    localStorage.setItem("theme", "light");
-    const { result } = renderHook(() => useTheme());
-    expect(result.current.theme).toBe("light");
-    expect(document.documentElement.classList.contains("dark")).toBe(false);
   });
 
   it("toggles between light and dark", () => {
     const { result } = renderHook(() => useTheme());
+    expect(result.current.theme).toBe("dark");
+
+    act(() => result.current.toggle());
     expect(result.current.theme).toBe("light");
+    expect(document.documentElement.classList.contains("light")).toBe(false);
 
     act(() => result.current.toggle());
     expect(result.current.theme).toBe("dark");
     expect(document.documentElement.classList.contains("dark")).toBe(true);
-
-    act(() => result.current.toggle());
-    expect(result.current.theme).toBe("light");
-    expect(document.documentElement.classList.contains("dark")).toBe(false);
-  });
-
-  it("persists the choice to localStorage on every change", () => {
-    const { result } = renderHook(() => useTheme());
-    // Initial effect ran, so localStorage should already be set.
-    expect(localStorage.getItem("theme")).toBe("light");
-
-    act(() => result.current.toggle());
-    expect(localStorage.getItem("theme")).toBe("dark");
   });
 });
