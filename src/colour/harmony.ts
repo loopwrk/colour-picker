@@ -12,6 +12,17 @@ export type HarmonyRecipe = ReadonlyArray<{
   lightness: number;
 }>;
 
+export const HARMONY_MODES = [
+  "split-complementary",
+  "complementary",
+  "triad",
+  "square",
+  "monochromatic",
+  "shades",
+] as const;
+
+export type HarmonyMode = (typeof HARMONY_MODES)[number];
+
 /**
  * Split-complementary recipe.
  *
@@ -92,22 +103,6 @@ export const SHADES: HarmonyRecipe = [
   { hueOffset: 0, saturation: 80, lightness: 32 },
   { hueOffset: 0, saturation: 80, lightness: 16 },
 ];
-
-/**
- * The set of harmony modes the app supports. Adding a new mode means
- * adding it here, exporting a recipe constant, and adding an entry to
- * RECIPES below — the UI selector reads from HARMONY_MODES.
- */
-export const HARMONY_MODES = [
-  "split-complementary",
-  "complementary",
-  "triad",
-  "square",
-  "monochromatic",
-  "shades",
-] as const;
-
-export type HarmonyMode = (typeof HARMONY_MODES)[number];
 
 /**
  * Lookup from mode name to recipe. Used by the UI layer so it can pass

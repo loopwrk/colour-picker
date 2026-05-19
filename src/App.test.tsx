@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
@@ -96,10 +96,10 @@ describe("App", () => {
     ).toBeInTheDocument();
   });
 
-  it.skip("renders 5 swatches on initial load", () => {
+  it("renders 5 swatches on initial load", () => {
     mockFetchEcho();
     const { container } = render(<App />, { wrapper: createWrapper() });
-    const swatches = container.querySelectorAll("section svg > path");
+    const swatches = container.querySelectorAll("section svg > g > path");
     expect(swatches).toHaveLength(5);
   });
 
@@ -112,7 +112,7 @@ describe("App", () => {
     expect(screen.getAllByText(/Mock Colour 5/).length).toBeGreaterThan(0);
   });
 
-  it.skip("clicking Generate produces a different palette", async () => {
+  it("clicking Generate produces a different palette", async () => {
     mockFetchEcho();
     const randomSpy = vi.spyOn(Math, "random");
     randomSpy.mockReturnValue(0); // first palette → baseHue 0
@@ -124,8 +124,8 @@ describe("App", () => {
     // SVG <path> elements don't have text content to read. Descendant
     // selector because the SVG is nested inside LabelledDonut's wrapper.
     const readFills = () =>
-      Array.from(container.querySelectorAll("section svg > path")).map((el) =>
-        el.getAttribute("fill"),
+      Array.from(container.querySelectorAll("section svg > g > path")).map(
+        (el) => el.getAttribute("fill"),
       );
 
     const firstFills = readFills();
@@ -168,7 +168,7 @@ describe("App", () => {
     expect(document.documentElement.classList.contains("dark")).toBe(true);
   });
 
-  it.skip("regenerates the palette when the harmony mode changes", async () => {
+  it("regenerates the palette when the harmony mode changes", async () => {
     mockFetchEcho();
     const randomSpy = vi.spyOn(Math, "random");
     randomSpy.mockReturnValue(0); // deterministic seed throughout
@@ -177,16 +177,14 @@ describe("App", () => {
     const { container } = render(<App />, { wrapper: createWrapper() });
 
     const readFills = () =>
-      Array.from(container.querySelectorAll("section svg > path")).map((el) =>
-        el.getAttribute("fill"),
+      Array.from(container.querySelectorAll("section svg > g > path")).map(
+        (el) => el.getAttribute("fill"),
       );
 
     const splitFills = readFills();
     expect(splitFills).toHaveLength(5);
 
-    // Pick the mode selector by its visually-hidden label, then switch it.
-    const selector = screen.getByLabelText(/harmony/i);
-    await user.selectOptions(selector, "shades");
+    await user.click(screen.getByRole("radio", { name: /^shades$/i }));
 
     await waitFor(() => {
       // Same base hue (Math.random pinned to 0) but a different recipe,
@@ -195,7 +193,7 @@ describe("App", () => {
     });
   });
 
-  it.skip("preserves a locked slot's hex across regeneration", async () => {
+  it("preserves a locked slot's hex across regeneration", async () => {
     mockFetchEcho();
     const randomSpy = vi.spyOn(Math, "random");
     randomSpy.mockReturnValue(0); // initial palette → baseHue 0
@@ -204,19 +202,18 @@ describe("App", () => {
     const { container } = render(<App />, { wrapper: createWrapper() });
 
     const readFills = () =>
-      Array.from(container.querySelectorAll("section svg > path")).map((el) =>
-        el.getAttribute("fill"),
+      Array.from(container.querySelectorAll("section svg > g > path")).map(
+        (el) => el.getAttribute("fill"),
       );
 
     const before = readFills();
 
     // Lock the third slice by clicking its corresponding row's lock
-    // button. (The row buttons are scoped to PaletteRows, which renders
-    // for all viewport sizes in jsdom.) Targeting the row's button by
-    // its aria-label means we don't need to know the underlying hex.
+    // button.
     const thirdHex = before[2]?.replace("#", "");
+    const rowsList = screen.getByRole("list");
     await user.click(
-      screen.getByRole("button", {
+      within(rowsList).getByRole("button", {
         name: new RegExp(`Lock colour ${thirdHex}`, "i"),
       }),
     );

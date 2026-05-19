@@ -3,27 +3,37 @@ import { Alert, Button } from "flowbite-react";
 import { useTranslation } from "react-i18next";
 import { LabelledDonut } from "./components/LabelledDonut";
 import { PaletteRows } from "./components/PaletteRows";
+import { HarmonyModeSelector } from "./components/HarmonyModeSelector";
 import { useTheme } from "./hooks/useTheme";
 import { MoonIcon, SunIcon } from "./components/icons";
-import { generatePalette, SPLIT_COMPLEMENTARY } from "./colour/harmony";
+import { generatePalette, RECIPES, type HarmonyMode } from "./colour/harmony";
 import { usePaletteNames } from "./colour/usePaletteNames";
 import type { Colour } from "./colour/types";
 
 function App() {
   const { t } = useTranslation();
   const { theme, toggle: toggleTheme } = useTheme();
+  const [mode, setMode] = useState<HarmonyMode>("split-complementary");
   const [palette, setPalette] = useState<Colour[]>(() =>
-    generatePalette(SPLIT_COMPLEMENTARY),
+    generatePalette(RECIPES[mode]),
   );
   const namesQuery = usePaletteNames(palette.map((colour) => colour.hex));
-  const handleGenerate = () => {
+
+  const regenerate = (nextMode: HarmonyMode) => {
     setPalette((current) => {
-      const fresh = generatePalette(SPLIT_COMPLEMENTARY);
-      // Locked slots keep their existing entry; unlocked slots take the
-      // freshly-generated one.
+      const fresh = generatePalette(RECIPES[nextMode]);
       return fresh.map((c, i) => (current[i].locked ? current[i] : c));
     });
   };
+
+  const handleGenerate = () => regenerate(mode);
+
+  const handleModeChange = (nextMode: HarmonyMode) => {
+    if (nextMode === mode) return;
+    setMode(nextMode);
+    regenerate(nextMode);
+  };
+
   const handleLockToggle = (index: number) => {
     setPalette((current) =>
       current.map((c, i) => (i === index ? { ...c, locked: !c.locked } : c)),
@@ -67,6 +77,10 @@ function App() {
           names={namesQuery.data}
           onSliceClick={handleLockToggle}
         />
+      </section>
+
+      <section className="mt-4 mb-4 md:mt-24">
+        <HarmonyModeSelector mode={mode} onChange={handleModeChange} />
       </section>
 
       <PaletteRows

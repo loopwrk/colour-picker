@@ -2,6 +2,17 @@
   "app": {
     "title": "React Colour Picker",
     "generate": "Generate",
+    "harmony": {
+      "label": "Harmony mode",
+      "modes": {
+        "split-complementary": "Split complementary",
+        "complementary": "Complementary",
+        "triad": "Triad",
+        "square": "Square",
+        "monochromatic": "Monochromatic",
+        "shades": "Shades"
+      }
+    },
     "theme": {
       "lightMode": "Light mode",
       "darkMode": "Dark mode",
