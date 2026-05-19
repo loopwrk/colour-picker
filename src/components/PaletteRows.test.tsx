@@ -71,7 +71,7 @@ describe("PaletteRows", () => {
     // jsdom normalises inline `background-color: #RRGGBB` to its
     // `rgb(r, g, b)` form, so we compare against that rather than the
     // original hex string.
-    const swatches = container.querySelectorAll("li > span:first-child");
+    const swatches = container.querySelectorAll('li span[aria-hidden="true"]');
     expect(swatches).toHaveLength(5);
     swatches.forEach((el, i) => {
       const hex = FIVE_COLOURS[i].hex;

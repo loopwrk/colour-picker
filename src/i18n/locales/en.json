@@ -2,6 +2,7 @@
   "app": {
     "title": "React Colour Picker",
     "generate": "Generate",
+    "copyAll": "Copy all",
     "harmony": {
       "label": "Harmony mode",
       "modes": {

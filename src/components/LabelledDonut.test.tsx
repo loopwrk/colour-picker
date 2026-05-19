@@ -92,8 +92,6 @@ describe("LabelledDonut", () => {
 
   it("does not render lock indicators in unlocked labels", () => {
     const { container } = render(<LabelledDonut palette={FIVE_COLOURS} />);
-    // Lock indicator is an SVG inside a label. The donut itself is one
-    // SVG; if no labels are locked, the donut should be the only SVG.
-    expect(container.querySelectorAll("svg")).toHaveLength(1);
+    expect(container.querySelectorAll('[data-icon="lock"]')).toHaveLength(0);
   });
 });

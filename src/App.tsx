@@ -17,6 +17,7 @@ function App() {
   const { copy, value: copiedHex } = useCopy();
   const [mode, setMode] = useState<HarmonyMode>("split-complementary");
   const [layout, setLayout] = useState<"radial" | "column">("column");
+  const [panelOpen, setPanelOpen] = useState(false);
   const [palette, setPalette] = useState<Colour[]>(() =>
     generatePalette(RECIPES[mode]),
   );
@@ -30,6 +31,7 @@ function App() {
   }, []);
 
   const handleGenerate = () => regenerate(mode);
+  const handleOpenPanel = () => setPanelOpen(true);
 
   const handleModeChange = (nextMode: HarmonyMode) => {
     if (nextMode === mode) return;
@@ -135,30 +137,51 @@ function App() {
             onCopy={handleCopy}
             showLabels={false}
           />
-          <PaletteRows
-            palette={palette}
-            names={namesQuery.data}
-            onLockToggle={handleLockToggle}
-            copiedHex={copiedHex}
-            onCopy={handleCopy}
-            hoverBackgroundOnDesktop
-          />
+          <div className="flex flex-col gap-4">
+            <PaletteRows
+              palette={palette}
+              names={namesQuery.data}
+              onLockToggle={handleLockToggle}
+              copiedHex={copiedHex}
+              onCopy={handleCopy}
+              hoverBackgroundOnDesktop
+            />
+            <Button
+              color="alternative"
+              onClick={handleOpenPanel}
+              className="hidden md:inline-flex md:self-start"
+              pill
+            >
+              {t("app.copyAll")}
+            </Button>
+          </div>
         </section>
       )}
 
       <HarmonyModeSelector mode={mode} onChange={handleModeChange} />
 
-      <Button
-        onClick={handleGenerate}
-        data-shortcut="generate"
-        className="md:fixed md:bottom-6 md:right-6 md:z-50 w-full md:w-auto"
-        pill
-      >
-        {t("app.generate")}
-        <span aria-hidden="true" className="ml-2 font-mono text-base">
-          ⎵
-        </span>
-      </Button>
+      <div className="grid grid-cols-2 gap-2 md:hidden">
+        <Button color="alternative" onClick={handleOpenPanel} pill>
+          {t("app.copyAll")}
+        </Button>
+        <Button onClick={handleGenerate} data-shortcut="generate" pill>
+          {t("app.generate")}
+        </Button>
+      </div>
+
+      <div className="hidden md:fixed md:bottom-6 md:right-6 md:z-50 md:flex md:items-center md:gap-2">
+        {layout === "radial" && (
+          <Button color="alternative" onClick={handleOpenPanel} pill>
+            {t("app.copyAll")}
+          </Button>
+        )}
+        <Button onClick={handleGenerate} data-shortcut="generate" pill>
+          {t("app.generate")}
+          <span aria-hidden="true" className="ml-2 font-mono text-base">
+            ⎵
+          </span>
+        </Button>
+      </div>
 
       <div role="status" aria-live="polite" className="sr-only">
         {copiedHex ? t("app.copy.announced", { value: copiedHex }) : ""}

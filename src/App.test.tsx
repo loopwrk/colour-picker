@@ -88,12 +88,39 @@ afterEach(() => {
 });
 
 describe("App", () => {
-  it("renders a Generate button", () => {
+  it("renders Generate buttons (mobile + desktop instances both in the DOM)", () => {
     mockFetchEcho();
     render(<App />, { wrapper: createWrapper() });
-    expect(
-      screen.getByRole("button", { name: /generate/i }),
-    ).toBeInTheDocument();
+    // In jsdom there's no responsive CSS, so both the mobile bar and
+    // desktop cluster render. Just confirm at least one exists.
+    const generates = screen.getAllByRole("button", { name: /generate/i });
+    expect(generates.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("renders Copy all buttons", () => {
+    mockFetchEcho();
+    render(<App />, { wrapper: createWrapper() });
+    const copyAlls = screen.getAllByRole("button", { name: /copy all/i });
+    expect(copyAlls.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("clicking Copy all does not regenerate the palette", async () => {
+    // Smoke test that Copy all is wired to a different handler than
+    // Generate. Math.random is the cleanest proxy: regenerating calls
+    // it; opening the panel must not.
+    mockFetchEcho();
+    const randomSpy = vi.spyOn(Math, "random");
+    randomSpy.mockReturnValue(0);
+
+    const user = userEvent.setup();
+    render(<App />, { wrapper: createWrapper() });
+
+    // Drain the call count from the initial render.
+    const callsBefore = randomSpy.mock.calls.length;
+
+    await user.click(screen.getAllByRole("button", { name: /copy all/i })[0]);
+
+    expect(randomSpy.mock.calls.length).toBe(callsBefore);
   });
 
   it("renders 5 swatches on initial load", () => {
@@ -132,7 +159,9 @@ describe("App", () => {
     expect(firstFills).toHaveLength(5);
 
     randomSpy.mockReturnValue(0.5); // second palette → baseHue 180
-    await user.click(screen.getByRole("button", { name: /generate/i }));
+    await user.click(
+      screen.getAllByRole("button", { name: /generate/i })[0],
+    );
 
     await waitFor(() => {
       expect(readFills()).not.toEqual(firstFills);
@@ -246,7 +275,9 @@ describe("App", () => {
         (el) => el.getAttribute("fill"),
       );
 
-    const generate = screen.getByRole("button", { name: /generate/i });
+    // Both mobile and desktop Generate buttons render in jsdom; either
+    // one works for this test since both carry data-shortcut="generate".
+    const generate = screen.getAllByRole("button", { name: /generate/i })[0];
     generate.focus();
     expect(document.activeElement).toBe(generate);
 
@@ -318,7 +349,10 @@ describe("App", () => {
     );
 
     randomSpy.mockReturnValue(0.5); // next palette would use baseHue 180
-    await user.click(screen.getByRole("button", { name: /generate/i }));
+    // Both Generate buttons share the same onClick, so clicking either works.
+    await user.click(
+      screen.getAllByRole("button", { name: /generate/i })[0],
+    );
 
     await waitFor(() => {
       const after = readFills();

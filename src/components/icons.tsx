@@ -18,6 +18,7 @@ export function LockIcon({ className, width, height, ...props }: IconProps) {
       width={width}
       height={height}
       className={`${defaultClasses} ${className ?? ""}`.trim()}
+      data-icon="lock"
       aria-hidden="true"
       {...props}
     >
@@ -40,6 +41,7 @@ export function UnlockIcon({ className, width, height, ...props }: IconProps) {
       width={width}
       height={height}
       className={`${defaultClasses} ${className ?? ""}`.trim()}
+      data-icon="unlock"
       aria-hidden="true"
       {...props}
     >
@@ -62,6 +64,7 @@ export function SunIcon({ className, width, height, ...props }: IconProps) {
       width={width}
       height={height}
       className={`${defaultClasses} ${className ?? ""}`.trim()}
+      data-icon="sun"
       aria-hidden="true"
       {...props}
     >
@@ -91,6 +94,7 @@ export function MoonIcon({ className, width, height, ...props }: IconProps) {
       width={width}
       height={height}
       className={`${defaultClasses} ${className ?? ""}`.trim()}
+      data-icon="moon"
       aria-hidden="true"
       {...props}
     >
@@ -112,6 +116,7 @@ export function CopyIcon({ className, width, height, ...props }: IconProps) {
       width={width}
       height={height}
       className={`${defaultClasses} ${className ?? ""}`.trim()}
+      data-icon="copy"
       aria-hidden="true"
       {...props}
     >
@@ -134,6 +139,7 @@ export function CheckIcon({ className, width, height, ...props }: IconProps) {
       width={width}
       height={height}
       className={`${defaultClasses} ${className ?? ""}`.trim()}
+      data-icon="check"
       aria-hidden="true"
       {...props}
     >
