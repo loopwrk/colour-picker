@@ -75,7 +75,7 @@ function App() {
   }, [mode, regenerate]);
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 p-4 md:p-8 flex flex-col gap-4">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 p-4 md:p-8 flex flex-col gap-4 md:gap-8">
       <header>
         <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100">
           {t("app.title")}
@@ -107,7 +107,7 @@ function App() {
 
       {layout === "radial" ? (
         <>
-          <section className="mx-auto w-full max-w-70 md:max-w-175 md:px-16 md:py-12">
+          <section className="mx-auto w-full max-w-70 md:max-w-175 md:px-16 md:pt-12 md:pb-32">
             <LabelledDonut
               palette={palette}
               names={namesQuery.data}
@@ -146,9 +146,7 @@ function App() {
         </section>
       )}
 
-      <section className="mt-4 mb-4 md:mt-24">
-        <HarmonyModeSelector mode={mode} onChange={handleModeChange} />
-      </section>
+      <HarmonyModeSelector mode={mode} onChange={handleModeChange} />
 
       <Button
         onClick={handleGenerate}
