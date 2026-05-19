@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Alert, Button } from "flowbite-react";
 import { useTranslation } from "react-i18next";
 import { LabelledDonut } from "./components/LabelledDonut";
@@ -19,12 +19,12 @@ function App() {
   );
   const namesQuery = usePaletteNames(palette.map((colour) => colour.hex));
 
-  const regenerate = (nextMode: HarmonyMode) => {
+  const regenerate = useCallback((nextMode: HarmonyMode) => {
     setPalette((current) => {
       const fresh = generatePalette(RECIPES[nextMode]);
       return fresh.map((c, i) => (current[i].locked ? current[i] : c));
     });
-  };
+  }, []);
 
   const handleGenerate = () => regenerate(mode);
 
@@ -39,6 +39,35 @@ function App() {
       current.map((c, i) => (i === index ? { ...c, locked: !c.locked } : c)),
     );
   };
+
+  // Global Space-bar shortcut: regenerate the palette from anywhere
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.code !== "Space" && e.key !== " ") return;
+
+      const target = e.target as HTMLElement | null;
+
+      // Don't hijack space while the user is typing.
+      if (target instanceof HTMLInputElement) return;
+      if (target instanceof HTMLTextAreaElement) return;
+      if (target instanceof HTMLElement && target.isContentEditable) return;
+
+      // Donut slice paths expose role="button" and run their own Space
+      // handler (toggle lock). Skip them so we don't double-fire.
+      if (target?.getAttribute("role") === "button") return;
+      // The Generate button activates natively on Space
+      if (
+        target instanceof HTMLElement &&
+        target.dataset.shortcut === "generate"
+      )
+        return;
+      e.preventDefault();
+      regenerate(mode);
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [mode, regenerate]);
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-900 p-4 md:p-8 flex flex-col gap-4">
@@ -92,6 +121,7 @@ function App() {
 
       <Button
         onClick={handleGenerate}
+        data-shortcut="generate"
         className="md:fixed md:bottom-6 md:right-6 md:z-50 w-full md:w-auto"
         pill
       >

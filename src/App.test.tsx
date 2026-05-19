@@ -193,6 +193,105 @@ describe("App", () => {
     });
   });
 
+  it("regenerates the palette when the space bar is pressed with no focused button", async () => {
+    mockFetchEcho();
+    const randomSpy = vi.spyOn(Math, "random");
+    randomSpy.mockReturnValue(0); // initial palette → baseHue 0
+
+    const user = userEvent.setup();
+    const { container } = render(<App />, { wrapper: createWrapper() });
+
+    const readFills = () =>
+      Array.from(container.querySelectorAll("section svg > g > path")).map(
+        (el) => el.getAttribute("fill"),
+      );
+
+    const before = readFills();
+    expect(before).toHaveLength(5);
+
+    // Move focus somewhere that's neither a button nor a form field —
+    // document.body is the default target when nothing is focused
+    (document.activeElement as HTMLElement | null)?.blur?.();
+    expect(document.activeElement).toBe(document.body);
+
+    randomSpy.mockReturnValue(0.5); // next palette would use baseHue 180
+    await user.keyboard(" ");
+
+    await waitFor(() => {
+      expect(readFills()).not.toEqual(before);
+    });
+  });
+
+  it("does not regenerate when space is pressed while the Generate button has focus", async () => {
+    // The global keydown listener must skip elements that already
+    // handle Space natively, otherwise a focused Generate button would
+    // fire twice — once natively, once from the listener — producing
+    // an unexpected second regeneration.
+    mockFetchEcho();
+    const randomSpy = vi.spyOn(Math, "random");
+    let randomCalls = 0;
+    // Each call to Math.random returns a different value so a double
+    // regeneration would produce a measurably different palette than
+    // a single one.
+    randomSpy.mockImplementation(() => {
+      randomCalls += 1;
+      return randomCalls * 0.1;
+    });
+
+    const user = userEvent.setup();
+    const { container } = render(<App />, { wrapper: createWrapper() });
+
+    const readFills = () =>
+      Array.from(container.querySelectorAll("section svg > g > path")).map(
+        (el) => el.getAttribute("fill"),
+      );
+
+    const generate = screen.getByRole("button", { name: /generate/i });
+    generate.focus();
+    expect(document.activeElement).toBe(generate);
+
+    const callsBefore = randomCalls;
+    await user.keyboard(" ");
+
+    await waitFor(() => {
+      // Exactly one regeneration → exactly one Math.random call.
+      expect(randomCalls - callsBefore).toBe(1);
+    });
+    // Sanity: the palette did update once.
+    expect(readFills()).toHaveLength(5);
+  });
+
+  it("regenerates when space is pressed after a harmony mode pill has been clicked", async () => {
+    mockFetchEcho();
+    const randomSpy = vi.spyOn(Math, "random");
+    randomSpy.mockReturnValue(0); // baseHue 0 for the initial palette
+    // and the mode-change regeneration.
+
+    const user = userEvent.setup();
+    const { container } = render(<App />, { wrapper: createWrapper() });
+
+    const readFills = () =>
+      Array.from(container.querySelectorAll("section svg > g > path")).map(
+        (el) => el.getAttribute("fill"),
+      );
+
+    // Click a mode pill — focus lands on that pill afterwards.
+    const triad = screen.getByRole("radio", { name: /^triad$/i });
+    await user.click(triad);
+    expect(document.activeElement).toBe(triad);
+    const afterModeSwitch = readFills();
+
+    // Now press Space without moving focus. The mode is unchanged
+    // (still triad), but a different Math.random value means a
+    // different baseHue, so the fills must change.
+    randomSpy.mockReturnValue(0.5);
+    await user.keyboard(" ");
+
+    await waitFor(() => {
+      expect(readFills()).not.toEqual(afterModeSwitch);
+    });
+  });
+
   it("preserves a locked slot's hex across regeneration", async () => {
     mockFetchEcho();
     const randomSpy = vi.spyOn(Math, "random");
