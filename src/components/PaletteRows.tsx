@@ -9,6 +9,7 @@ interface PaletteRowsProps {
   copiedHex?: string | null;
   onCopy?: (hex: string) => void;
   className?: string;
+  hoverBackgroundOnDesktop?: boolean;
 }
 
 export function PaletteRows({
@@ -18,6 +19,7 @@ export function PaletteRows({
   copiedHex,
   onCopy,
   className = "",
+  hoverBackgroundOnDesktop = false,
 }: PaletteRowsProps) {
   const { t } = useTranslation();
 
@@ -25,10 +27,13 @@ export function PaletteRows({
     <ul className={`flex flex-col gap-2 ${className}`}>
       {palette.map((colour, index) => {
         const isCopied = copiedHex === `#${colour.hex}`;
+        const rowBg = hoverBackgroundOnDesktop
+          ? "bg-slate-200/60 dark:bg-slate-800/60 md:bg-transparent dark:md:bg-transparent md:hover:bg-slate-200/60 dark:md:hover:bg-slate-800/60"
+          : "bg-slate-200/60 dark:bg-slate-800/60";
         return (
           <li
             key={index}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-slate-200/60 dark:bg-slate-800/60"
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg ${rowBg}`}
           >
             <button
               type="button"

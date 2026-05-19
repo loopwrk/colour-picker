@@ -16,6 +16,7 @@ function App() {
   const { theme, toggle: toggleTheme } = useTheme();
   const { copy, value: copiedHex } = useCopy();
   const [mode, setMode] = useState<HarmonyMode>("split-complementary");
+  const [layout, setLayout] = useState<"radial" | "column">("column");
   const [palette, setPalette] = useState<Colour[]>(() =>
     generatePalette(RECIPES[mode]),
   );
@@ -104,28 +105,50 @@ function App() {
         </Alert>
       )}
 
-      <section className="mx-auto w-full max-w-70 md:max-w-175 md:px-16 md:py-12">
-        <LabelledDonut
-          palette={palette}
-          names={namesQuery.data}
-          onSliceClick={handleLockToggle}
-          copiedHex={copiedHex}
-          onCopy={handleCopy}
-        />
-      </section>
+      {layout === "radial" ? (
+        <>
+          <section className="mx-auto w-full max-w-70 md:max-w-175 md:px-16 md:py-12">
+            <LabelledDonut
+              palette={palette}
+              names={namesQuery.data}
+              onSliceClick={handleLockToggle}
+              copiedHex={copiedHex}
+              onCopy={handleCopy}
+            />
+          </section>
+          <PaletteRows
+            palette={palette}
+            names={namesQuery.data}
+            className="md:hidden"
+            onLockToggle={handleLockToggle}
+            copiedHex={copiedHex}
+            onCopy={handleCopy}
+          />
+        </>
+      ) : (
+        <section className="mx-auto w-full max-w-70 md:max-w-4xl md:py-12 md:grid md:grid-cols-2 md:gap-12 md:items-center">
+          <LabelledDonut
+            palette={palette}
+            names={namesQuery.data}
+            onSliceClick={handleLockToggle}
+            copiedHex={copiedHex}
+            onCopy={handleCopy}
+            showLabels={false}
+          />
+          <PaletteRows
+            palette={palette}
+            names={namesQuery.data}
+            onLockToggle={handleLockToggle}
+            copiedHex={copiedHex}
+            onCopy={handleCopy}
+            hoverBackgroundOnDesktop
+          />
+        </section>
+      )}
 
       <section className="mt-4 mb-4 md:mt-24">
         <HarmonyModeSelector mode={mode} onChange={handleModeChange} />
       </section>
-
-      <PaletteRows
-        palette={palette}
-        names={namesQuery.data}
-        className="md:hidden"
-        onLockToggle={handleLockToggle}
-        copiedHex={copiedHex}
-        onCopy={handleCopy}
-      />
 
       <Button
         onClick={handleGenerate}
@@ -142,6 +165,19 @@ function App() {
       <div role="status" aria-live="polite" className="sr-only">
         {copiedHex ? t("app.copy.announced", { value: copiedHex }) : ""}
       </div>
+
+      {import.meta.env.DEV && (
+        <button
+          type="button"
+          onClick={() =>
+            setLayout((l) => (l === "radial" ? "column" : "radial"))
+          }
+          aria-label="Toggle palette layout (dev only)"
+          className="fixed bottom-6 left-6 z-50 px-3 py-1.5 text-xs font-mono rounded-full bg-slate-900/80 dark:bg-slate-100/80 text-slate-100 dark:text-slate-900 opacity-50 hover:opacity-100 transition-opacity"
+        >
+          layout: {layout}
+        </button>
+      )}
     </div>
   );
 }

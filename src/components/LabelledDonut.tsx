@@ -10,6 +10,7 @@ interface LabelledDonutProps {
   onSliceClick?: (index: number) => void;
   copiedHex?: string | null;
   onCopy?: (hex: string) => void;
+  showLabels?: boolean;
 }
 
 const radiusPercent = 65;
@@ -20,6 +21,7 @@ export function LabelledDonut({
   onSliceClick,
   copiedHex,
   onCopy,
+  showLabels = true,
 }: LabelledDonutProps) {
   const { t } = useTranslation();
   const swatchLabels = palette.map((colour, sliceIndex) => {
@@ -76,7 +78,7 @@ export function LabelledDonut({
   return (
     <div className="relative w-full aspect-square">
       <DonutSwatch palette={palette} onSliceClick={onSliceClick} />
-      <div className="hidden md:block">{swatchLabels}</div>
+      {showLabels && <div className="hidden md:block">{swatchLabels}</div>}
     </div>
   );
 }
