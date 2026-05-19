@@ -91,8 +91,6 @@ describe("App", () => {
   it("renders Generate buttons (mobile + desktop instances both in the DOM)", () => {
     mockFetchEcho();
     render(<App />, { wrapper: createWrapper() });
-    // In jsdom there's no responsive CSS, so both the mobile bar and
-    // desktop cluster render. Just confirm at least one exists.
     const generates = screen.getAllByRole("button", { name: /generate/i });
     expect(generates.length).toBeGreaterThanOrEqual(1);
   });
@@ -159,9 +157,7 @@ describe("App", () => {
     expect(firstFills).toHaveLength(5);
 
     randomSpy.mockReturnValue(0.5); // second palette → baseHue 180
-    await user.click(
-      screen.getAllByRole("button", { name: /generate/i })[0],
-    );
+    await user.click(screen.getAllByRole("button", { name: /generate/i })[0]);
 
     await waitFor(() => {
       expect(readFills()).not.toEqual(firstFills);
@@ -350,9 +346,7 @@ describe("App", () => {
 
     randomSpy.mockReturnValue(0.5); // next palette would use baseHue 180
     // Both Generate buttons share the same onClick, so clicking either works.
-    await user.click(
-      screen.getAllByRole("button", { name: /generate/i })[0],
-    );
+    await user.click(screen.getAllByRole("button", { name: /generate/i })[0]);
 
     await waitFor(() => {
       const after = readFills();

@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-import { Alert, Button } from "flowbite-react";
+import { Alert, Button, Drawer, DrawerItems } from "flowbite-react";
 import { useTranslation } from "react-i18next";
 import { LabelledDonut } from "./components/LabelledDonut";
 import { PaletteRows } from "./components/PaletteRows";
+import { ExportPanel } from "./components/ExportPanel";
 import { HarmonyModeSelector } from "./components/HarmonyModeSelector";
 import { useCopy } from "./hooks/useCopy";
 import { useTheme } from "./hooks/useTheme";
@@ -32,6 +33,7 @@ function App() {
 
   const handleGenerate = () => regenerate(mode);
   const handleOpenPanel = () => setPanelOpen(true);
+  const closePanel = () => setPanelOpen(false);
 
   const handleModeChange = (nextMode: HarmonyMode) => {
     if (nextMode === mode) return;
@@ -50,6 +52,12 @@ function App() {
   // Global Space-bar shortcut: regenerate the palette from anywhere
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && panelOpen) {
+        e.preventDefault();
+        setPanelOpen(false);
+        return;
+      }
+
       if (e.code !== "Space" && e.key !== " ") return;
 
       const target = e.target as HTMLElement | null;
@@ -74,7 +82,7 @@ function App() {
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [mode, regenerate]);
+  }, [mode, regenerate, panelOpen]);
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-900 p-4 md:p-8 flex flex-col gap-4 md:gap-8">
@@ -118,6 +126,8 @@ function App() {
               onCopy={handleCopy}
             />
           </section>
+          {/* Mobile-only rows. The export panel is shown via the Drawer
+              overlay (below) so the rows stay unconditionally rendered. */}
           <PaletteRows
             palette={palette}
             names={namesQuery.data}
@@ -149,7 +159,10 @@ function App() {
             <Button
               color="alternative"
               onClick={handleOpenPanel}
-              className="hidden md:inline-flex md:self-start"
+              className={`hidden md:inline-flex md:self-start transition-opacity duration-300 ${
+                panelOpen ? "opacity-0 pointer-events-none" : "opacity-100"
+              }`}
+              aria-hidden={panelOpen}
               pill
             >
               {t("app.copyAll")}
@@ -160,7 +173,12 @@ function App() {
 
       <HarmonyModeSelector mode={mode} onChange={handleModeChange} />
 
-      <div className="grid grid-cols-2 gap-2 md:hidden">
+      <div
+        className={`grid grid-cols-2 gap-2 md:hidden transition-opacity duration-300 ${
+          panelOpen ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
+        aria-hidden={panelOpen}
+      >
         <Button color="alternative" onClick={handleOpenPanel} pill>
           {t("app.copyAll")}
         </Button>
@@ -169,7 +187,12 @@ function App() {
         </Button>
       </div>
 
-      <div className="hidden md:fixed md:bottom-6 md:right-6 md:z-50 md:flex md:items-center md:gap-2">
+      <div
+        className={`hidden md:fixed md:bottom-6 md:right-6 md:z-50 md:flex md:items-center md:gap-2 transition-opacity duration-300 ${
+          panelOpen ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
+        aria-hidden={panelOpen}
+      >
         {layout === "radial" && (
           <Button color="alternative" onClick={handleOpenPanel} pill>
             {t("app.copyAll")}
@@ -186,7 +209,16 @@ function App() {
       <div role="status" aria-live="polite" className="sr-only">
         {copiedHex ? t("app.copy.announced", { value: copiedHex }) : ""}
       </div>
-
+      <Drawer
+        open={panelOpen}
+        onClose={closePanel}
+        position="right"
+        className="w-full max-w-md"
+      >
+        <DrawerItems className="h-full p-0">
+          <ExportPanel palette={palette} onClose={closePanel} />
+        </DrawerItems>
+      </Drawer>
       {import.meta.env.DEV && (
         <button
           type="button"

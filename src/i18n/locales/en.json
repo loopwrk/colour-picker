@@ -28,6 +28,30 @@
     "error": {
       "namesFailed": "Couldn't load colour names",
       "retry": "Retry"
+    },
+    "export": {
+      "title": "Export palette",
+      "close": "Close export panel",
+      "colourSpaceLegend": "Colour space",
+      "outputFormatLegend": "Output format",
+      "copySwatch": "Copy swatch",
+      "remember": "Remember settings",
+      "spaces": {
+        "oklch": "OKLCH",
+        "oklab": "OKLAB",
+        "hex": "Hex",
+        "rgb": "RGB",
+        "hsl": "HSL",
+        "hwb": "HWB",
+        "display-p3": "Display P3"
+      },
+      "formats": {
+        "css-variables": "CSS Custom Properties",
+        "design-tokens": "Design Tokens",
+        "tailwind": "Tailwind CSS",
+        "json": "JSON",
+        "array": "Array"
+      }
     }
   }
 }
