@@ -35,6 +35,7 @@
       "colourSpaceLegend": "Colour space",
       "outputFormatLegend": "Output format",
       "copySwatch": "Copy swatch",
+      "copied": "Copied!",
       "remember": "Remember settings",
       "spaces": {
         "oklch": "OKLCH",

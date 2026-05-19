@@ -1,4 +1,7 @@
-import { useId, useState } from "react";
+import { useId, useState, useEffect } from "react";
+import { useCopy } from "../hooks/useCopy";
+import { formatColour } from "../colour/spaces";
+import { formatPalette } from "../colour/formats";
 import { useTranslation } from "react-i18next";
 import { Button, Checkbox, Label } from "flowbite-react";
 import {
@@ -8,7 +11,40 @@ import {
   type OutputFormat,
 } from "../colour/export";
 import type { Colour } from "../colour/types";
-import { CopyIcon } from "./icons";
+import { CopyIcon, CheckIcon } from "./icons";
+
+const STORAGE_KEY = "colour-picker:export-settings";
+
+interface StoredSettings {
+  colourSpace: ColourSpace;
+  outputFormat: OutputFormat;
+}
+
+function readStoredSettings(): StoredSettings | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed: unknown = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return null;
+    const candidate = parsed as Partial<StoredSettings>;
+    if (
+      !candidate.colourSpace ||
+      !COLOUR_SPACES.includes(candidate.colourSpace)
+    )
+      return null;
+    if (
+      !candidate.outputFormat ||
+      !OUTPUT_FORMATS.includes(candidate.outputFormat)
+    )
+      return null;
+    return {
+      colourSpace: candidate.colourSpace,
+      outputFormat: candidate.outputFormat,
+    };
+  } catch {
+    return null;
+  }
+}
 
 interface ExportPanelProps {
   palette: Colour[];
@@ -23,22 +59,41 @@ interface ExportPanelProps {
  * settings. Copy is a no-op for now, add in later.
  */
 
-// TODO: Wire up the copy functionality, and the remember settings.
-// TODO: Export condensed panel as a individual component or update PaletteRows component.
-// TODO: Consider exporting any of the elements here as individual components.
-
 export function ExportPanel({
   palette,
   onClose,
   className = "",
 }: ExportPanelProps) {
   const { t } = useTranslation();
-  const [colourSpace, setColourSpace] = useState<ColourSpace>("oklch");
-  const [outputFormat, setOutputFormat] =
-    useState<OutputFormat>("css-variables");
-  const [remember, setRemember] = useState(false);
+  const stored = readStoredSettings();
+  const [colourSpace, setColourSpace] = useState<ColourSpace>(
+    stored?.colourSpace ?? "oklch",
+  );
+  const [outputFormat, setOutputFormat] = useState<OutputFormat>(
+    stored?.outputFormat ?? "css-variables",
+  );
+  const [remember, setRemember] = useState<boolean>(stored !== null);
 
   const rememberId = useId();
+
+  useEffect(() => {
+    if (remember) {
+      const payload: StoredSettings = { colourSpace, outputFormat };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }, [remember, colourSpace, outputFormat]);
+
+  const { copy, status: copyStatus } = useCopy();
+
+  const handleCopy = () => {
+    const formattedColours = palette.map((c) =>
+      formatColour(c.hex, colourSpace),
+    );
+    const output = formatPalette(formattedColours, outputFormat);
+    copy(output);
+  };
 
   return (
     <div
@@ -157,14 +212,18 @@ export function ExportPanel({
             {t("app.export.remember")}
           </Label>
         </div>
-        <Button
-          onClick={() => {
-            // TODO: Wire this up.
-          }}
-          pill
-        >
-          <CopyIcon className="w-4 h-4 mr-2" />
-          {t("app.export.copySwatch")}
+        <Button onClick={handleCopy} pill>
+          {copyStatus === "success" ? (
+            <>
+              <CheckIcon className="w-4 h-4 mr-2" />
+              {t("app.export.copied")}
+            </>
+          ) : (
+            <>
+              <CopyIcon className="w-4 h-4 mr-2" />
+              {t("app.export.copySwatch")}
+            </>
+          )}
         </Button>
       </div>
     </div>
