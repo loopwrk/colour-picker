@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { LabelledDonut } from "./components/LabelledDonut";
 import { PaletteRows } from "./components/PaletteRows";
 import { HarmonyModeSelector } from "./components/HarmonyModeSelector";
+import { useCopy } from "./hooks/useCopy";
 import { useTheme } from "./hooks/useTheme";
 import { MoonIcon, SunIcon } from "./components/icons";
 import { generatePalette, RECIPES, type HarmonyMode } from "./colour/harmony";
@@ -13,6 +14,7 @@ import type { Colour } from "./colour/types";
 function App() {
   const { t } = useTranslation();
   const { theme, toggle: toggleTheme } = useTheme();
+  const { copy, value: copiedHex } = useCopy();
   const [mode, setMode] = useState<HarmonyMode>("split-complementary");
   const [palette, setPalette] = useState<Colour[]>(() =>
     generatePalette(RECIPES[mode]),
@@ -39,6 +41,8 @@ function App() {
       current.map((c, i) => (i === index ? { ...c, locked: !c.locked } : c)),
     );
   };
+
+  const handleCopy = (hex: string) => copy(`#${hex}`);
 
   // Global Space-bar shortcut: regenerate the palette from anywhere
   useEffect(() => {
@@ -105,6 +109,8 @@ function App() {
           palette={palette}
           names={namesQuery.data}
           onSliceClick={handleLockToggle}
+          copiedHex={copiedHex}
+          onCopy={handleCopy}
         />
       </section>
 
@@ -117,6 +123,8 @@ function App() {
         names={namesQuery.data}
         className="md:hidden"
         onLockToggle={handleLockToggle}
+        copiedHex={copiedHex}
+        onCopy={handleCopy}
       />
 
       <Button
@@ -130,6 +138,10 @@ function App() {
           ⎵
         </span>
       </Button>
+
+      <div role="status" aria-live="polite" className="sr-only">
+        {copiedHex ? t("app.copy.announced", { value: copiedHex }) : ""}
+      </div>
     </div>
   );
 }

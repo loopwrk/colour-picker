@@ -13,6 +13,11 @@
         "shades": "Shades"
       }
     },
+    "copy": {
+      "label": "Copy #{{hex}} to clipboard",
+      "copied": "Copied",
+      "announced": "Copied {{value}} to clipboard"
+    },
     "theme": {
       "lightMode": "Light mode",
       "darkMode": "Dark mode",

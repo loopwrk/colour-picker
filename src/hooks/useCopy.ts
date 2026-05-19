@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect } from "react";
 
-type CopyStatus = "idle" | "copying" | "success" | "error";
+export type CopyStatus = "idle" | "copying" | "success" | "error";
 
-export function useCopy(timeout = 2000) {
+export function useCopy(timeout = 850) {
   const [status, setStatus] = useState<CopyStatus>("idle");
   const [value, setValue] = useState<string | null>(null);
 
