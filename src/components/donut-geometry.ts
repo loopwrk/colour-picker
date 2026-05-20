@@ -60,7 +60,7 @@ export function getLabelPosition(
   radiusPercent: number,
 ): { xPercent: number; yPercent: number } {
   const sliceAngle = 360 / sliceCount;
-  const centreAngleDeg = (sliceIndex + 0.5) * sliceAngle;
+  const centreAngleDeg = sliceIndex * sliceAngle;
   const angleRad = ((centreAngleDeg - 90) * Math.PI) / 180;
   return {
     xPercent: 50 + radiusPercent * Math.cos(angleRad),

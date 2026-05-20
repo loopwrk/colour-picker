@@ -27,8 +27,8 @@ export function DonutSwatch({
   const iconRadius = r + (R - r) / 2;
 
   const slices = palette.map((colour, i) => {
-    const startAngle = i * sliceAngle;
-    const endAngle = (i + 1) * sliceAngle;
+    const startAngle = i * sliceAngle - sliceAngle / 2;
+    const endAngle = (i + 1) * sliceAngle - sliceAngle / 2;
 
     // Calculate the midpoint angle of the current slice (in radians)
     const midAngleDegrees = startAngle + sliceAngle / 2;
