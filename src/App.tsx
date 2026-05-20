@@ -5,6 +5,7 @@ import { LabelledDonut } from "./components/LabelledDonut";
 import { PaletteRows } from "./components/PaletteRows";
 import { ExportPanel } from "./components/ExportPanel";
 import { HarmonyModeSelector } from "./components/HarmonyModeSelector";
+import { ColourPicker } from "./components/ColourPicker";
 import { useCopy } from "./hooks/useCopy";
 import { useTheme } from "./hooks/useTheme";
 import { MoonIcon, SunIcon } from "./components/icons";
@@ -18,6 +19,7 @@ function App() {
   const { copy, value: copiedHex } = useCopy();
   const [mode, setMode] = useState<HarmonyMode>("split-complementary");
   const [layout, setLayout] = useState<"radial" | "column">("column");
+  const [baseColour, setBaseColour] = useState<string | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
   const [palette, setPalette] = useState<Colour[]>(() =>
     generatePalette(RECIPES[mode]),
@@ -138,7 +140,15 @@ function App() {
           />
         </>
       ) : (
-        <section className="mx-auto w-full max-w-70 md:max-w-4xl md:py-12 md:grid md:grid-cols-2 md:gap-12 md:items-center">
+        <section className="mx-auto w-full max-w-70 md:max-w-5xl md:py-12 md:grid md:grid-cols-[1fr_2fr_1fr] md:gap-8 md:items-center">
+          {/* Picker — desktop column only. Hidden on mobile because the
+      mobile-only ColourPicker below the section is the one that
+      shows on small screens. */}
+          <ColourPicker
+            value={baseColour}
+            onApply={setBaseColour}
+            className="hidden md:block"
+          />
           <LabelledDonut
             palette={palette}
             names={namesQuery.data}
@@ -170,6 +180,14 @@ function App() {
           </div>
         </section>
       )}
+
+      {/* Mobile-only ColourPicker — sits between the donut/rows region
+    and the harmony-mode pills. Hidden on desktop where the picker
+    lives in the column section instead. The radial desktop layout
+    has no picker at all (per current scope). */}
+      <div className="md:hidden mx-auto w-full max-w-70">
+        <ColourPicker value={baseColour} onApply={setBaseColour} />
+      </div>
 
       <HarmonyModeSelector mode={mode} onChange={handleModeChange} />
 

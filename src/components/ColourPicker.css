@@ -1,0 +1,27 @@
+/* Tailwind v4 requires this directive when @apply is used in CSS
+   files that aren't the main entry — it imports the theme so the
+   utility classes resolve. */
+@reference "../index.css";
+
+.colour-picker .react-colorful {
+  @apply w-full h-auto gap-3 flex flex-col;
+}
+
+.colour-picker .react-colorful__saturation {
+  @apply h-64 rounded-lg;
+  border-bottom: 0;
+  flex-grow: 0;
+}
+
+.colour-picker .react-colorful__hue {
+  @apply h-8 rounded-lg;
+}
+
+/* Alpha hidden */
+.colour-picker .react-colorful__alpha {
+  display: none;
+}
+
+.colour-picker .react-colorful__pointer {
+  @apply w-5 h-5;
+}
